@@ -2,14 +2,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="TDMController.App"
              xmlns:local="using:TDMController"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             RequestedThemeVariant="Dark">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->	
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
   
     <Application.Styles>
-        <FluentTheme />
-    </Application.Styles>
+        <FluentTheme/>
+		<materialIcons:MaterialIconStyles />
+		<StyleInclude Source="/Assets/Styles/ButtonStyles.axaml"></StyleInclude>
+		<StyleInclude Source="/Assets/Styles/TextBoxStyles.axaml"></StyleInclude>
+	</Application.Styles>
 </Application>
