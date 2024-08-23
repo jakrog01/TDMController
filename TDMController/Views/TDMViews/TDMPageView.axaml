@@ -3,15 +3,55 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:local="clr-namespace:TDMController.Helper"
+			 xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ir="clr-namespace:Avalonia.Xaml.Interactions.Responsive;assembly=Avalonia.Xaml.Interactions.Responsive"
 			 xmlns:vm="using:TDMController.ViewModels.TDMViewModels"
 			 xmlns:TDMViews ="clr-namespace:TDMController.Views.TDMViews"
              mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="600"
              x:Class="TDMController.Views.TDMViews.TDMPageView">
 
+	<UserControl.Styles>
+		<Style Selector="ContentControl">
+			<Setter Property="(i:Interaction.Behaviors)">
+				<i:BehaviorCollectionTemplate>
+					<i:BehaviorCollection>
+						<ir:AdaptiveBehavior SourceControl="{Binding $parent[UserControl]}">
+							<ir:AdaptiveClassSetter MinWidth="0" MaxWidth="800" ClassName="fullyCollapsed" />
+							<ir:AdaptiveClassSetter MinWidth="800" MaxWidth="950" ClassName="collapsed" />
+							<ir:AdaptiveClassSetter MinWidth="950" MaxWidth="Infinity" ClassName="expanded" />
+						</ir:AdaptiveBehavior>
+					</i:BehaviorCollection>
+				</i:BehaviorCollectionTemplate>
+			</Setter>
+		</Style>
+	</UserControl.Styles>
+
 	<UserControl.Resources>
-	</UserControl.Resources>
-	
-	<TDMViews:TDMExpandedView>
+		<DataTemplate x:Key="FullyCollapsedViewTemplate">
+			<TDMViews:TDMFullyCollapsedView />
+		</DataTemplate>
 		
-	</TDMViews:TDMExpandedView>
+		<DataTemplate x:Key="CollapsedViewTemplate">
+			<TDMViews:TDMCollapsedView />
+		</DataTemplate>
+
+		<DataTemplate x:Key="ExpandedViewTemplate">
+			<TDMViews:TDMExpandedView />
+		</DataTemplate>
+	</UserControl.Resources>
+
+	<ContentControl>
+		<ContentControl.Styles>
+			<Style Selector="ContentControl.fullyCollapsed">
+				<Setter Property="ContentTemplate" Value="{StaticResource FullyCollapsedViewTemplate}" />
+			</Style>
+			<Style Selector="ContentControl.collapsed">
+				<Setter Property="ContentTemplate" Value="{StaticResource CollapsedViewTemplate}" />
+				</Style>
+			<Style Selector="ContentControl.expanded">
+				<Setter Property="ContentTemplate" Value="{StaticResource ExpandedViewTemplate}" />
+			</Style>
+		</ContentControl.Styles>
+	</ContentControl>
+
 </UserControl>
