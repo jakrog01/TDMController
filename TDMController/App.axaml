@@ -12,7 +12,8 @@
     <Application.Styles>
         <FluentTheme/>
 		<materialIcons:MaterialIconStyles />
-		<StyleInclude Source="/Assets/Styles/ButtonStyles.axaml"></StyleInclude>
-		<StyleInclude Source="/Assets/Styles/TextBoxStyles.axaml"></StyleInclude>
+		<StyleInclude Source="/Assets/Styles/ButtonStyles.axaml"/>
+		<StyleInclude Source="/Assets/Styles/TextBoxStyles.axaml"/>
+		<StyleInclude Source="/Assets/Styles/TextBlockStyles.axaml"/>
 	</Application.Styles>
 </Application>

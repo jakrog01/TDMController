@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="284"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:vm="using:TDMController.ViewModels.TDMViewModels"
+             x:Class="TDMController.Views.TDMViews.MotorsControllerCollapsedView"
+			 x:DataType="vm:MotorsControllerCollapsedViewModel">
+
+	<UserControl.DataContext>
+		<vm:MotorsControllerCollapsedViewModel/>
+	</UserControl.DataContext>
+
+	<Border CornerRadius="15" BorderBrush="#00B394" BorderThickness="2" Background="#18242A">
+		
+		<StackPanel Spacing="7">
+
+			<Border Height="65" Background="#0E1414" CornerRadius="15,15,0,0">
+				<TextBlock Classes="infoLabel" Text="{Binding BranchLabel}"
+							FontWeight="Bold" FontSize="40"/>
+			</Border>
+
+			<Border Height="205" Background="#0E1414" CornerRadius="0,0,15,15">
+				
+				<ItemsControl ItemsSource="{Binding MotorControllers}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<UniformGrid Columns="2" VerticalAlignment="Center"/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="vm:MotorControllerItem">
+							<UniformGrid Rows="3" Margin="10,0,10,10">
+
+								<TextBlock Classes="infoLabel" Text="{Binding Label}" FontSize="30" FontWeight="Bold" Padding="0"/>
+
+								<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="55" Margin="5,0,5,5">
+									<Button Classes="actionButton" Width="65" Height="65" CornerRadius="5">
+										<materialIcons:MaterialIcon Kind="{Binding IconBackward}" Height="65" Width="65"
+																	Foreground="#00B394"/>
+									</Button>
+
+									<Button Classes="actionButton" Width="65" Height="65" CornerRadius="5">
+										<materialIcons:MaterialIcon Kind="{Binding IconForward}" Height="65" Width="65"
+																	Foreground="#00B394"/>
+									</Button>
+								</StackPanel>
+
+								<TextBox Classes="infoTextBlock" Width="90" Height="45" FontSize="30"></TextBox>
+							</UniformGrid>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</Border>
+			
+		</StackPanel>
+		
+	</Border>
+</UserControl>

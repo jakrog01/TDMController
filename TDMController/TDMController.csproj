@@ -9,13 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
 
   <ItemGroup>
     <AvaloniaResource Remove="Assets\Styles\ButtonStyles.axaml" />
     <AvaloniaResource Remove="Assets\Styles\TextBoxStyles.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaXaml Remove="Assets\Styles\TextBlockStyles.axaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +36,12 @@
     <PackageReference Include="Avalonia.Xaml.Interactivity" Version="11.1.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Material.Icons.Avalonia" Version="2.1.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Update="Assets\Styles\TextBlockStyles.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
   </ItemGroup>
 
   <ItemGroup>
