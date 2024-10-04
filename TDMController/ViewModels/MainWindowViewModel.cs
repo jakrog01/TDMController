@@ -7,12 +7,26 @@ using TDMController.ViewModels.TDMViewModels;
 using TDMController.Models;
 using TDMController.Models.TDMDevices;
 using System.IO.Ports;
+using TDMController.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TDMController.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
 
+        private readonly IBranchCollectionService _branchCollectionService;
+        private readonly IServiceProvider _serviceProvider;
+
+        public MainWindowViewModel(IBranchCollectionService branchCollectionService, IServiceProvider serviceProvider)
+        {
+            _branchCollectionService = branchCollectionService;
+            _serviceProvider = serviceProvider;
+            _branchCollectionService.LoadCollectionFromFile("ddd");
+        }
+
+        public ObservableCollection<Branch> BranchCollection => _branchCollectionService.BranchList;
+        
         [ObservableProperty]
         private bool _isPaneOpen = false;
 
@@ -25,7 +39,7 @@ namespace TDMController.ViewModels
         partial void OnSelectedMenuItemChanged(PageListItem? value)
         {
             if (value is null) return;
-            var instance = Activator.CreateInstance(value.ModelType);
+            var instance = _serviceProvider.GetRequiredService(value.ModelType);
             if (instance is null) return;
             CurrentPage = (ViewModelBase)instance;
         }
@@ -36,11 +50,6 @@ namespace TDMController.ViewModels
             new PageListItem(typeof(SeriesPageViewModel), MaterialIconKind.ClipboardList),
             new PageListItem(typeof(ProjectsPageViewModel), MaterialIconKind.FileDocumentMultipleOutline),
         ];
-
-        public ObservableCollection<Branch> Branches { get; set; } =
-            [
-                new Branch("COM6", 9600, 1, new RotationDevice(1, new SerialPort("COM6", 9600)), null),
-            ];
 
         [RelayCommand]
         private void TriggerPane()

@@ -18,12 +18,6 @@ namespace TDMController.ViewModels.TDMViewModels
             new TDMActionButton("Reset",  MaterialIconKind.Restart),
         };
     }
-
-    public class TDMActionButton(string label, MaterialIconKind icon)
-    {
-        public string Label { get; } = label;
-        public MaterialIconKind Icon { get; } = icon;
-    }
 }
 
 

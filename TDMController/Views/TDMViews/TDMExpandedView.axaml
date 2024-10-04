@@ -6,10 +6,10 @@
 			 xmlns:vm="using:TDMController.ViewModels.TDMViewModels"
              mc:Ignorable="d" d:DesignWidth="1040" d:DesignHeight="600"
              x:Class="TDMController.Views.TDMViews.TDMExpandedView"
-			 x:DataType="vm:TDMViewModel">
+			 x:DataType="vm:TDMPageViewModel">
 
 	<UserControl.DataContext>
-		<vm:TDMViewModel />
+		<vm:TDMPageViewModel />
 	</UserControl.DataContext>
 	
 	<Border CornerRadius="20 0 0 0"
