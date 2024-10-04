@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 namespace TDMController.ViewModels.TDMViewModels
 {
-    public partial class TDMExpandedViewModel : ViewModelBase
+    public partial class TDMViewModel : ViewModelBase
     {
 
         [ObservableProperty]
@@ -16,7 +16,6 @@ namespace TDMController.ViewModels.TDMViewModels
             new TDMActionButton("Measure",  MaterialIconKind.Finance),
             new TDMActionButton("Photo",  MaterialIconKind.Camera),
             new TDMActionButton("Reset",  MaterialIconKind.Restart),
-            new TDMActionButton("Move all",  MaterialIconKind.Play),
         };
     }
 

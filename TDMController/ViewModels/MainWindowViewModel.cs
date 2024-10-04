@@ -4,11 +4,15 @@ using System;
 using System.Collections.ObjectModel;
 using Material.Icons;
 using TDMController.ViewModels.TDMViewModels;
+using TDMController.Models;
+using TDMController.Models.TDMDevices;
+using System.IO.Ports;
 
 namespace TDMController.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
+
         [ObservableProperty]
         private bool _isPaneOpen = false;
 
@@ -26,12 +30,17 @@ namespace TDMController.ViewModels
             CurrentPage = (ViewModelBase)instance;
         }
 
-        public ObservableCollection<PageListItem> MenuItems { get; } = new()
-        {
+        public ObservableCollection<PageListItem> MenuItems { get; } =
+        [
             new PageListItem(typeof(TDMPageViewModel), MaterialIconKind.Hub),
             new PageListItem(typeof(SeriesPageViewModel), MaterialIconKind.ClipboardList),
             new PageListItem(typeof(ProjectsPageViewModel), MaterialIconKind.FileDocumentMultipleOutline),
-        };
+        ];
+
+        public ObservableCollection<Branch> Branches { get; set; } =
+            [
+                new Branch("COM6", 9600, 1, new RotationDevice(1, new SerialPort("COM6", 9600)), null),
+            ];
 
         [RelayCommand]
         private void TriggerPane()
@@ -48,7 +57,6 @@ namespace TDMController.ViewModels
             Label = type.Name.Replace("PageViewModel", "");
             Icon = icon;
         }
-
         public string Label { get; }
         public Type ModelType { get; }
         public MaterialIconKind Icon { get; }
