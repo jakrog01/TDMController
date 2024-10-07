@@ -14,7 +14,7 @@ namespace TDMController.Models
         private RotationDevice? _rotationDevice;
         private IPositionDevice? _positionDevice;
         internal BranchStates _branchState;
-        internal int BranchIndex { get; set; }
+        internal int BranchIndex { get; private set; }
 
         internal Branch(string com, int baudRate, int branchIndex, RotationDevice? rotationDevice, IPositionDevice? positionDevice)
         {

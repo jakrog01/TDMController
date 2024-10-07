@@ -23,6 +23,8 @@ namespace TDMController.ViewModels
             _branchCollectionService = branchCollectionService;
             _serviceProvider = serviceProvider;
             _branchCollectionService.LoadCollectionFromFile("ddd");
+
+            _currentPage = (ViewModelBase)_serviceProvider.GetRequiredService(typeof(TDMPageViewModel));
         }
 
         public ObservableCollection<Branch> BranchCollection => _branchCollectionService.BranchList;
@@ -31,7 +33,7 @@ namespace TDMController.ViewModels
         private bool _isPaneOpen = false;
 
         [ObservableProperty]
-        private ViewModelBase _currentPage = new TDMPageViewModel();
+        private ViewModelBase _currentPage;
 
         [ObservableProperty]
         private PageListItem? _selectedMenuItem;

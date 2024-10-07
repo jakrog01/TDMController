@@ -7,14 +7,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TDMController.Models;
+using TDMController.Services;
 
 namespace TDMController.ViewModels.TDMViewModels
 {
     public partial class TDMPageViewModel : ViewModelBase
     {
 
+        public TDMPageViewModel(IBranchCollectionService branchCollectionService)
+        {
+            var branchCollection = branchCollectionService.BranchList;
+            var branches = new List<BranchItem>();
+
+            for (var i = 0; i < branchCollection.Count; i++)
+            {
+                var branchItem = new BranchItem(branchCollection[i]);
+                branches.Add(branchItem);
+            }
+
+            Branches = new ObservableCollection<BranchItem>(branches);
+        }
+
+        public ObservableCollection<BranchItem> Branches { get; private set; }
+
         [ObservableProperty]
-        private String? _measuredPower = "0W";
+        private String? _measuredPower = "ND";
 
         public ObservableCollection<TDMActionButton> TDMActionButtons { get; } = new()
         {
@@ -28,5 +45,11 @@ namespace TDMController.ViewModels.TDMViewModels
     {
         public string Label { get; } = label;
         public MaterialIconKind Icon { get; } = icon;
+    }
+
+    public class BranchItem(Branch branch)
+    {
+        public Branch Branch { get; } = branch;
+        public String Label { get; } = $"Branch {branch.BranchIndex}";
     }
 }
