@@ -15,13 +15,14 @@ namespace TDMController.Services
 
     public class BranchCollectionService : IBranchCollectionService
     {
-        public ObservableCollection<Branch> BranchList { get; private set; } = new ObservableCollection<Branch>();
+        public ObservableCollection<Branch> BranchList { get; private set; } = [];
 
         public void LoadCollectionFromFile(string path)
         {
             BranchList.Clear();
             BranchList = [
-                new Branch("COM6", 9600, 1, new RotationDevice(1, new SerialPort("COM6", 9600)), null),
+                new Branch("COM6", 9600, 1, new RotationDevice(1), null),
+                new Branch("COM8", 9600, 2, new RotationDevice(1), null),
             ];
         }
     }

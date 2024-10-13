@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 using System;
 using System.Collections.Generic;
@@ -12,24 +13,33 @@ namespace TDMController.ViewModels.TDMViewModels
 {
     public partial class MotorsControllerCollapsedViewModel : ViewModelBase
     {
-        [ObservableProperty]
-        private Branch? _branch;
 
-        [ObservableProperty]
-        private String? _branchLabel = "BRANCH 1";
+        public Branch Branch { get;}
 
-        public ObservableCollection<MotorControllerItem> MotorControllers{ get; } = new()
+        public MotorsControllerCollapsedViewModel(Branch branch) { 
+            Branch = branch;
+            BranchLabel = $"BRANCH {branch.BranchIndex}";
+            MotorControllers = new ObservableCollection<MotorControllerItem>
         {
-            new MotorControllerItem("ROTATION", MaterialIconKind.ChevronRight, MaterialIconKind.ChevronLeft),
-            new MotorControllerItem("POSITION", MaterialIconKind.ChevronRight, MaterialIconKind.ChevronLeft)
+            new("ROTATION", MaterialIconKind.ChevronRight, MaterialIconKind.ChevronLeft, () => Branch.MoveRotationDevice(180), () => Branch.MoveRotationDevice(-180)),
         };
+        }
+
+        [ObservableProperty]
+        private String? _branchLabel;
+
+        public ObservableCollection<MotorControllerItem> MotorControllers{ get; }
     }
 
-    public class MotorControllerItem (string label, MaterialIconKind iconForward, MaterialIconKind iconBackward)
+    public class MotorControllerItem (string label, MaterialIconKind iconForward, MaterialIconKind iconBackward, Action moveForeward, Action moveBackward)
     {
         public string Label { get; } = label;
         public MaterialIconKind IconForward { get; } = iconForward;
 
         public MaterialIconKind IconBackward { get; } = iconBackward;
+
+        public RelayCommand MoveForeward { get; } = new RelayCommand(moveForeward);
+
+        public RelayCommand MoveBackward { get; } = new RelayCommand(moveBackward);
     }
 }

@@ -12,8 +12,13 @@
 	
 	<Border CornerRadius="20 0 0 0"
 					  Background="#18242a">
-		<StackPanel>
-			<Grid VerticalAlignment="Center" Height="65">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+			
+			<Grid VerticalAlignment="Center" Height="65" Grid.Row="0">
 
 				<Grid.Background>
 					<SolidColorBrush Color="#0E1414" Opacity="0.2"/>
@@ -60,21 +65,23 @@
 				</ItemsControl>
 			</Grid>
 
-			<ItemsControl ItemsSource="{Binding Branches}" Margin="15,10,15,10">
-				<ItemsControl.ItemsPanel>
-					<ItemsPanelTemplate>
-						<WrapPanel />
-					</ItemsPanelTemplate>
-				</ItemsControl.ItemsPanel>
+			<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+				<ItemsControl ItemsSource="{Binding Branches}" Margin="15,10,15,10">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<WrapPanel HorizontalAlignment="Center" Orientation="Horizontal"/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
 
-				<ItemsControl.ItemTemplate>
-					<DataTemplate DataType="vm:BranchItem">
-						<TDMViews:MotorsControllerCollapsedView></TDMViews:MotorsControllerCollapsedView>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
-			
-		</StackPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="vm:BranchItem">
+							<TDMViews:MotorsControllerCollapsedView Margin="15,10,15,10" DataContext="{Binding ViewModel}"></TDMViews:MotorsControllerCollapsedView>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+
+		</Grid>
 	</Border>
 </UserControl>
 

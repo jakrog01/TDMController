@@ -49,7 +49,6 @@ namespace TDMController.ViewModels.TDMViewModels
 
     public class BranchItem(Branch branch)
     {
-        public Branch Branch { get; } = branch;
-        public String Label { get; } = $"Branch {branch.BranchIndex}";
+        public ViewModelBase ViewModel { get; init; } = new MotorsControllerCollapsedViewModel(branch);
     }
 }

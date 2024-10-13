@@ -1,0 +1,21 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+			<NumericUpDown Classes="MoveValue"></NumericUpDown>
+        </Border>
+    </Design.PreviewWith>
+
+	<Style Selector="NumericUpDown.MoveValue">
+		<Setter Property="Background" Value="#0E1414"/>
+		<Setter Property="Width" Value="150"/>
+		<Setter Property="Height" Value="50"/>
+		<Setter Property="BorderBrush" Value="#00B394"/>
+		<Setter Property="FontFamily" Value="Segoe"/>
+		<Setter Property="FontSize" Value="20"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter	Property="ShowButtonSpinner" Value="False"/>
+		<Setter Property="FormatString" Value="0"/>
+	</Style>
+</Styles>

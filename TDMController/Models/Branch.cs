@@ -23,6 +23,10 @@ namespace TDMController.Models
             BranchIndex = branchIndex;
             _serialPort = new SerialPort(com, baudRate);
             _rotationDevice = rotationDevice;
+            if (_rotationDevice is not null)
+            {
+                _rotationDevice.SetSerialPort(_serialPort);
+            }
             _positionDevice = positionDevice;
             try
             {
@@ -41,7 +45,7 @@ namespace TDMController.Models
             SendTriggerCommand("c", 2000);
         }
 
-        private void MoveRotationDevice(int angle)
+        public void MoveRotationDevice(int angle)
         {
             angle %= 360;
             int TIMEOUT = 10000;

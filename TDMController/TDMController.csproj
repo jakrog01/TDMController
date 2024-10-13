@@ -47,6 +47,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaXaml Update="Assets\Styles\NumericUpDownStyles.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
     <AvaloniaXaml Update="Assets\Styles\TextBoxStyles.axaml">
       <SubType>Designer</SubType>
     </AvaloniaXaml>

@@ -16,9 +16,9 @@
 				<i:BehaviorCollectionTemplate>
 					<i:BehaviorCollection>
 						<ir:AdaptiveBehavior SourceControl="{Binding $parent[UserControl]}">
-							<ir:AdaptiveClassSetter MinWidth="0" MaxWidth="800" ClassName="fullyCollapsed" />
-							<ir:AdaptiveClassSetter MinWidth="800" MaxWidth="950" ClassName="collapsed" />
-							<ir:AdaptiveClassSetter MinWidth="950" MaxWidth="Infinity" ClassName="expanded" />
+							<ir:AdaptiveClassSetter MinWidth="0" MaxWidth="750" ClassName="fullyCollapsed" />
+							<ir:AdaptiveClassSetter MinWidth="750" MaxWidth="800" ClassName="collapsed" />
+							<ir:AdaptiveClassSetter MinWidth="800" MaxWidth="Infinity" ClassName="expanded" />
 						</ir:AdaptiveBehavior>
 					</i:BehaviorCollection>
 				</i:BehaviorCollectionTemplate>

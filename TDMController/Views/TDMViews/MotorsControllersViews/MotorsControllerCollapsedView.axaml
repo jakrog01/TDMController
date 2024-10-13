@@ -8,10 +8,6 @@
              x:Class="TDMController.Views.TDMViews.MotorsControllerCollapsedView"
 			 x:DataType="vm:MotorsControllerCollapsedViewModel">
 
-	<UserControl.DataContext>
-		<vm:MotorsControllerCollapsedViewModel/>
-	</UserControl.DataContext>
-
 	<Border CornerRadius="15" BorderBrush="#00B394" BorderThickness="2" Background="#18242A">
 		
 		<StackPanel Spacing="7">
@@ -37,18 +33,18 @@
 								<TextBlock Classes="infoLabel" Text="{Binding Label}" FontSize="30" FontWeight="Bold" Padding="0"/>
 
 								<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="55" Margin="5,0,5,5">
-									<Button Classes="actionButton" Width="65" Height="65" CornerRadius="5">
+									<Button Classes="actionButton" Command="{Binding MoveBackward}" Width="65" Height="65" CornerRadius="5">
 										<materialIcons:MaterialIcon Kind="{Binding IconBackward}" Height="65" Width="65"
 																	Foreground="#00B394"/>
 									</Button>
 
-									<Button Classes="actionButton" Width="65" Height="65" CornerRadius="5">
+									<Button Classes="actionButton" Command="{Binding MoveForeward}" Width="65" Height="65" CornerRadius="5">
 										<materialIcons:MaterialIcon Kind="{Binding IconForward}" Height="65" Width="65"
 																	Foreground="#00B394"/>
 									</Button>
 								</StackPanel>
 
-								<TextBox Classes="infoTextBlock" Width="90" Height="45" FontSize="30"></TextBox>
+								<NumericUpDown Classes="MoveValue" Width="110" Height="45" FontSize="30"></NumericUpDown>
 							</UniformGrid>
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
