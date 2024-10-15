@@ -19,27 +19,33 @@ namespace TDMController.ViewModels.TDMViewModels
         public MotorsControllerCollapsedViewModel(Branch branch) { 
             Branch = branch;
             BranchLabel = $"BRANCH {branch.BranchIndex}";
-            MotorControllers = new ObservableCollection<MotorControllerItem>
-        {
-            new("ROTATION", MaterialIconKind.ChevronRight, MaterialIconKind.ChevronLeft, () => Branch.MoveRotationDevice(180), () => Branch.MoveRotationDevice(-180)),
-        };
         }
 
         [ObservableProperty]
         private String? _branchLabel;
 
-        public ObservableCollection<MotorControllerItem> MotorControllers{ get; }
-    }
+        [ObservableProperty]
+        private MaterialIconKind _iconForward = MaterialIconKind.ChevronRight;
 
-    public class MotorControllerItem (string label, MaterialIconKind iconForward, MaterialIconKind iconBackward, Action moveForeward, Action moveBackward)
-    {
-        public string Label { get; } = label;
-        public MaterialIconKind IconForward { get; } = iconForward;
+        [ObservableProperty]
+        private MaterialIconKind _iconBackward= MaterialIconKind.ChevronLeft;
 
-        public MaterialIconKind IconBackward { get; } = iconBackward;
+        [ObservableProperty]
+        private double _rotationMoveValue = 0;
 
-        public RelayCommand MoveForeward { get; } = new RelayCommand(moveForeward);
+        [ObservableProperty]
+        private double _positionMoveValue = 0;
 
-        public RelayCommand MoveBackward { get; } = new RelayCommand(moveBackward);
+        public void MoveRotationDeviceForeward()
+        {
+            var value = Convert.ToInt32(RotationMoveValue);
+            Branch.MoveRotationDevice(value);
+        }
+
+        public void MoveRotationDeviceBackward()
+        {
+            var value = - Convert.ToInt32(RotationMoveValue);
+            Branch.MoveRotationDevice(value);
+        }
     }
 }

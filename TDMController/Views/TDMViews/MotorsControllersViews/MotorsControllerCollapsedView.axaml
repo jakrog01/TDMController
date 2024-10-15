@@ -18,40 +18,42 @@
 			</Border>
 
 			<Border Height="205" Background="#0E1414" CornerRadius="0,0,15,15">
-				
-				<ItemsControl ItemsSource="{Binding MotorControllers}">
-					<ItemsControl.ItemsPanel>
-						<ItemsPanelTemplate>
-							<UniformGrid Columns="2" VerticalAlignment="Center"/>
-						</ItemsPanelTemplate>
-					</ItemsControl.ItemsPanel>
 
-					<ItemsControl.ItemTemplate>
-						<DataTemplate DataType="vm:MotorControllerItem">
-							<UniformGrid Rows="3" Margin="10,0,10,10">
+				<UniformGrid Columns="2" VerticalAlignment="Center">
+					<UniformGrid Rows="3" Margin="10,0,10,10">
+						<TextBlock Classes="infoLabel" Text="ROTATION" FontSize="30" FontWeight="Bold" Padding="0"/>
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="35" Margin="5,0,5,5">
+							<Button Classes="actionButton" Command="{Binding MoveRotationDeviceBackward}" Width="65" Height="65" CornerRadius="5">
+								<materialIcons:MaterialIcon Kind="{Binding IconBackward}" Height="65" Width="65"
+															Foreground="#00B394"/>
+							</Button>
 
-								<TextBlock Classes="infoLabel" Text="{Binding Label}" FontSize="30" FontWeight="Bold" Padding="0"/>
+							<Button Classes="actionButton" Command="{Binding MoveRotationDeviceForeward}" Width="65" Height="65" CornerRadius="5">
+								<materialIcons:MaterialIcon Kind="{Binding IconForward}" Height="65" Width="65"
+															Foreground="#00B394"/>
+							</Button>
+						</StackPanel>
+						<NumericUpDown Classes="MoveValue" Value="{Binding RotationMoveValue, Mode=TwoWay}" Width="100" Height="45" FontSize="25"></NumericUpDown>
+					</UniformGrid>
 
-								<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="55" Margin="5,0,5,5">
-									<Button Classes="actionButton" Command="{Binding MoveBackward}" Width="65" Height="65" CornerRadius="5">
-										<materialIcons:MaterialIcon Kind="{Binding IconBackward}" Height="65" Width="65"
-																	Foreground="#00B394"/>
-									</Button>
+					<UniformGrid Rows="3" Margin="10,0,10,10">
+						<TextBlock Classes="infoLabel" Text="POSITION" FontSize="30" FontWeight="Bold" Padding="0"/>
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="35" Margin="5,0,5,5">
+							<Button Classes="actionButton" Width="65" Height="65" CornerRadius="5">
+								<materialIcons:MaterialIcon Kind="{Binding IconBackward}" Height="65" Width="65"
+															Foreground="#00B394"/>
+							</Button>
 
-									<Button Classes="actionButton" Command="{Binding MoveForeward}" Width="65" Height="65" CornerRadius="5">
-										<materialIcons:MaterialIcon Kind="{Binding IconForward}" Height="65" Width="65"
-																	Foreground="#00B394"/>
-									</Button>
-								</StackPanel>
-
-								<NumericUpDown Classes="MoveValue" Width="110" Height="45" FontSize="30"></NumericUpDown>
-							</UniformGrid>
-						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
+							<Button Classes="actionButton" Width="65" Height="65" CornerRadius="5">
+								<materialIcons:MaterialIcon Kind="{Binding IconForward}" Height="65" Width="65"
+															Foreground="#00B394"/>
+							</Button>
+						</StackPanel>
+						<NumericUpDown Classes="MoveValue" Value="{Binding PositionMoveValue, Mode=TwoWay}" Width="100" Height="45" FontSize="25"></NumericUpDown>
+					</UniformGrid>
+					
+				</UniformGrid>
 			</Border>
-			
 		</StackPanel>
-		
 	</Border>
 </UserControl>
