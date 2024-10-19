@@ -47,5 +47,17 @@ namespace TDMController.ViewModels.TDMViewModels
             var value = - Convert.ToInt32(RotationMoveValue);
             Branch.MoveRotationDevice(value);
         }
+
+        public void MovePositionDeviceForeward()
+        {
+            var value = Convert.ToInt32(PositionMoveValue);
+            Branch.MovePositionDevice(value);
+        }
+
+        public void MovePositionDeviceBackward()
+        {
+            var value = -Convert.ToInt32(PositionMoveValue);
+            Branch.MovePositionDevice(value);
+        }
     }
 }

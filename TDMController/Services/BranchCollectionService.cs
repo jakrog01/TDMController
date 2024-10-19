@@ -22,7 +22,7 @@ namespace TDMController.Services
             BranchList.Clear();
             BranchList = [
                 new Branch("COM6", 9600, 1, new RotationDevice(1), null),
-                new Branch("COM8", 9600, 2, new RotationDevice(1), null),
+                new Branch("COM7", 9600, 2, null, new PODLDevice()),
             ];
         }
     }

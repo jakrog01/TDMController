@@ -28,6 +28,11 @@ namespace TDMController.Models
                 _rotationDevice.SetSerialPort(_serialPort);
             }
             _positionDevice = positionDevice;
+            if (positionDevice is PODLDevice podl)
+            {
+                podl.SetSerialPort(_serialPort);
+            }
+
             try
             {
                 _serialPort.Open();
@@ -45,19 +50,18 @@ namespace TDMController.Models
             SendTriggerCommand("c", 2000);
         }
 
-        public void MoveRotationDevice(int angle)
+        public void MoveRotationDevice(int moveValue)
         {
-            angle %= 360;
-            int TIMEOUT = 10000;
-            int value = Convert.ToInt32(Math.Round(angle / 360.0 * 2038));
+            moveValue %= 360;
+            const int TIMEOUT = 10000;
+            var value = Convert.ToInt32(Math.Round(moveValue / 360.0 * 2038));
 
-            if (angle !=0 && _rotationDevice is not null)
+            if (moveValue != 0 && _rotationDevice is not null)
             {
                 try
                 {
-                    var MoveTask = Task.Run(() => _rotationDevice.MoveDevice(value));
-                    bool branchConnection = MoveTask.Wait(TIMEOUT);
-                    if (!branchConnection)
+                    var moveTask = Task.Run(() => _rotationDevice.MoveDevice(value));
+                    if (!moveTask.Wait(TIMEOUT))
                     {
                         _rotationDevice.State = RotationDeviceStates.Error;
                     }
@@ -66,9 +70,37 @@ namespace TDMController.Models
                 {
                     _branchState = BranchStates.Error;
                 }
-                _rotationDevice.Position += angle;
+                _rotationDevice.Position += moveValue;
                 _rotationDevice.Position %= 360;
             }
+        }
+
+        public void MovePositionDevice(int moveValue)
+        {
+            if (moveValue == 0 || _positionDevice is null)
+            {
+                return;
+            }
+
+            if (_positionDevice is PODLDevice podl)
+            {
+                int TIMEOUT = 1500 + ((Math.Abs(moveValue) % 360) * 2000);
+                var value = Convert.ToInt32(Math.Round(moveValue / 360.0 * 200));
+                try
+                {
+                    var MoveTask = Task.Run(() => podl.MoveDevice(value));
+                    if (!MoveTask.Wait(TIMEOUT))
+                    {
+                        podl.State = PositionDeviceStates.Error;
+                    }
+                    podl.Position += moveValue;
+                }
+                catch
+                {
+                    _branchState = BranchStates.Error;
+                }
+            }
+            
         }
 
         private void SendExternalDeviceTrigger()
