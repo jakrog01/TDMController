@@ -1,0 +1,22 @@
+{
+  "Branches": [
+    {
+      "Com": "COM6",
+      "BranchIndex": 1,
+      "MotorList": [
+        {
+          "RotationMotor": { "Direction": 1 }
+        }
+      ]
+    },
+    {
+      "Com": "COM7",
+      "BranchIndex": 2,
+      "MotorList": [
+        {
+          "PODLDevice": {}
+        }
+      ]
+    }
+  ]
+}

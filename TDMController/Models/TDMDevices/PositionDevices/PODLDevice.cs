@@ -15,27 +15,17 @@ namespace TDMController.Models.TDMDevices
         public int Position { get; set; }
         private SerialPort? _serialPort;
 
-        internal PODLDevice()
-        {
-            Position = 0;
-        }
-        public void SetSerialPort(SerialPort serialPort)
+        internal PODLDevice(SerialPort serialPort)
         {
             _serialPort = serialPort;
-            if (serialPort.IsOpen)
-            {
-                State = PositionDeviceStates.Ready;
-            }
-            else
-            {
-                State = PositionDeviceStates.Error;
-            }
+            Position = 0;
         }
+
         public void MoveDevice(int value)
         {
             State = PositionDeviceStates.Busy;
             string commandJson = JsonSerializer.Serialize(new ArduinoCommand("p", value));
-            _serialPort.Write(commandJson + "\n");
+            _serialPort!.Write(commandJson + "\n");
             while (true)
             {
                 string receivedData = _serialPort.ReadLine();

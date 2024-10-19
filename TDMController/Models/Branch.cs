@@ -10,28 +10,19 @@ namespace TDMController.Models
 {
     public class Branch
     {
-        private SerialPort _serialPort;
-        private RotationDevice? _rotationDevice;
-        private IPositionDevice? _positionDevice;
+        internal SerialPort _serialPort { get;}
+        internal RotationDevice? _rotationDevice { get; }
+        internal IPositionDevice? _positionDevice { get; }
         internal BranchStates _branchState;
-        internal int BranchIndex { get; private set; }
+        internal int? BranchIndex { get; private set; }
 
-        internal Branch(string com, int baudRate, int branchIndex, RotationDevice? rotationDevice, IPositionDevice? positionDevice)
+        internal Branch(SerialPort serialPort, int? branchIndex, RotationDevice? rotationDevice, IPositionDevice? positionDevice)
         {
-            _serialPort = new SerialPort(com, baudRate);
+            _serialPort = serialPort;
             _branchState = BranchStates.Connection;
             BranchIndex = branchIndex;
-            _serialPort = new SerialPort(com, baudRate);
             _rotationDevice = rotationDevice;
-            if (_rotationDevice is not null)
-            {
-                _rotationDevice.SetSerialPort(_serialPort);
-            }
             _positionDevice = positionDevice;
-            if (positionDevice is PODLDevice podl)
-            {
-                podl.SetSerialPort(_serialPort);
-            }
 
             try
             {
@@ -42,6 +33,7 @@ namespace TDMController.Models
             {
                 _branchState = BranchStates.Error;
             }
+
             Task.Run(() => CheckBranchConnection());
         }
 

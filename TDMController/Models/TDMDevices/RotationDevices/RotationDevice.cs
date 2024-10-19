@@ -12,23 +12,11 @@ namespace TDMController.Models.TDMDevices
         private readonly int Direction;
         private SerialPort? _serialPort;
 
-        internal RotationDevice(int direction)
+        internal RotationDevice(int direction, SerialPort serialPort)
         {
-            Direction = direction;
             Position = 0;
-        }
-
-        public void SetSerialPort(SerialPort serialPort)
-        {
+            Direction = direction;
             _serialPort = serialPort;
-            if (serialPort.IsOpen)
-            {
-                State = RotationDeviceStates.Ready;
-            }
-            else
-            {
-                State = RotationDeviceStates.Error;
-            }
         }
 
         public void MoveDevice(int value)
