@@ -10,10 +10,33 @@ namespace TDMController.Models
             Branches = new ObservableCollection<Branch>(branches);
             PhotoBranch = photoBranch;
             MeasureBranch = measureBranch;
+            ProjectKey = GetKey(Branches);
         }
+
         public ObservableCollection<Branch> Branches { get; set; } = [];
         public Branch? PhotoBranch { get; set; }
         public Branch? MeasureBranch { get; set; }
+
+        public string ProjectKey { get; set; }
+
+        public string GetKey(ObservableCollection<Branch> branches)
+        {
+            string key = "";
+
+            foreach (Branch branch in branches)
+            {
+                if (branch.RotationDevice is not null)
+                {
+                    key += ("R" + (branch.BranchIndex).ToString());
+                }
+
+                if (branch.PositionDevice is not null)
+                {
+                    key += ("P" + (branch.BranchIndex).ToString());
+                }
+            }
+            return key;
+        }
 
     }
 }
