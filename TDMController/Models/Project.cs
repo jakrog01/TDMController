@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TDMController.Models
 {
@@ -15,11 +11,8 @@ namespace TDMController.Models
             PhotoBranch = photoBranch;
             MeasureBranch = measureBranch;
         }
-
         public ObservableCollection<Branch> Branches { get; set; } = [];
-
         public Branch? PhotoBranch { get; set; }
-
         public Branch? MeasureBranch { get; set; }
 
     }

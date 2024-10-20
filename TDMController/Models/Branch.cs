@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using TDMController.Models.TDMDevices;
+using TDMController.Models.TDMDevices.PositionDevices;
 using TDMController.Models.TDMDevices.States;
 
 namespace TDMController.Models
@@ -23,7 +24,6 @@ namespace TDMController.Models
             BranchIndex = branchIndex;
             RotationDevice = rotationDevice;
             PositionDevice = positionDevice;
-
             try
             {
                 SerialPort.Open();
@@ -92,7 +92,16 @@ namespace TDMController.Models
                     BranchState = BranchStates.Error;
                 }
             }
-            
+
+            else if (PositionDevice is TLPositionDevice tlPositionMotor)
+            {
+                if (tlPositionMotor.KCubeDevice is not null)
+                {
+                    var MoveTask = Task.Run(() => tlPositionMotor.MoveDevice(moveValue));
+                }
+            }
+
+
         }
 
         public void SendExternalDeviceTrigger()

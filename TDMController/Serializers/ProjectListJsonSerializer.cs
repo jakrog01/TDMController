@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TDMController.Models;
 using System.IO.Ports;
 using TDMController.Models.TDMDevices;
+using TDMController.Models.TDMDevices.PositionDevices;
 
 namespace TDMController.Serializers
 {
@@ -70,6 +71,10 @@ namespace TDMController.Serializers
 
                                     case "PODLDevice":
                                         positionDevice = new PODLDevice(serialPort!);
+                                        break;
+
+                                    case "TLPositionDevice":
+                                        positionDevice = new TLPositionDevice(props.GetProperty("SerialNumber").GetString()!);
                                         break;
                                 }
                             }
