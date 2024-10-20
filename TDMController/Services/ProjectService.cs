@@ -10,37 +10,47 @@ using System.IO;
 
 namespace TDMController.Services
 {
-    public interface IBranchCollectionService
+    public interface IProjectService
     {
         ObservableCollection<Branch> BranchList { get; }
+
+        Branch PhotoBranch { get; }
+
+        Branch MeasureBranch { get; }
 
         void LoadCollectionFromFile(string path);
     }
 
 
-    public class BranchCollectionService : IBranchCollectionService
+    public class ProjectService : IProjectService
     {
         public ObservableCollection<Branch> BranchList { get; private set; } = [];
+
+        public Branch PhotoBranch { get; private set; } = null;
+
+        public Branch MeasureBranch { get; private set; } = null;
 
         public void LoadCollectionFromFile(string path)
         {
             BranchList.Clear();
             string filePath = System.IO.Path.GetFullPath(Environment.CurrentDirectory + @"\UserProjects\Project2.json");
             JsonSerializerOptions options = new JsonSerializerOptions();
-            options.Converters.Add(new BranchListJsonConverter());
+            options.Converters.Add(new ProjectJsonConverter());
             options.WriteIndented = true;
 
-            var branchList = new List<Branch>();
+            Project? project = null;
 
             using (StreamReader r = new StreamReader(filePath))
             {
                 string json = r.ReadToEnd();
                 Console.WriteLine(json);
-                branchList = JsonSerializer.Deserialize<List<Branch>>(json, options);
+                project = JsonSerializer.Deserialize<Project>(json, options);
             }
-            if (branchList is not null)
+            if (project is not null)
             {
-                BranchList = new ObservableCollection<Branch>(branchList);
+                BranchList = project.Branches;
+                PhotoBranch = project.PhotoBranch;
+                MeasureBranch = project.MeasureBranch;
             }
         }
     }

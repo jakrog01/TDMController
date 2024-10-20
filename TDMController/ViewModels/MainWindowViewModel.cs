@@ -15,10 +15,10 @@ namespace TDMController.ViewModels
     public partial class MainWindowViewModel : ViewModelBase
     {
 
-        private readonly IBranchCollectionService _branchCollectionService;
+        private readonly IProjectService _branchCollectionService;
         private readonly IServiceProvider _serviceProvider;
 
-        public MainWindowViewModel(IBranchCollectionService branchCollectionService, IServiceProvider serviceProvider)
+        public MainWindowViewModel(IProjectService branchCollectionService, IServiceProvider serviceProvider)
         {
             _branchCollectionService = branchCollectionService;
             _serviceProvider = serviceProvider;

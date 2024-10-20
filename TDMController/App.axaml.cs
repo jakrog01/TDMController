@@ -47,7 +47,7 @@ namespace TDMController
 
         private void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IBranchCollectionService, BranchCollectionService>();
+            services.AddSingleton<IProjectService, ProjectService>();
 
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<TDMPageViewModel>();

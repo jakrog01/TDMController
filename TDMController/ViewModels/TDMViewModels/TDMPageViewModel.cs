@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using TDMController.Models;
 using TDMController.Services;
 
@@ -14,9 +16,9 @@ namespace TDMController.ViewModels.TDMViewModels
     public partial class TDMPageViewModel : ViewModelBase
     {
 
-        public TDMPageViewModel(IBranchCollectionService branchCollectionService)
+        public TDMPageViewModel(IProjectService projectCollectionService)
         {
-            var branchCollection = branchCollectionService.BranchList;
+            var branchCollection = projectCollectionService.BranchList;
             var branches = new List<BranchItem>();
 
             for (var i = 0; i < branchCollection.Count; i++)
@@ -26,25 +28,50 @@ namespace TDMController.ViewModels.TDMViewModels
             }
 
             Branches = new ObservableCollection<BranchItem>(branches);
+            PhotoBranch = projectCollectionService.PhotoBranch;
+            MeasureBranch = projectCollectionService.MeasureBranch;
+
+            TDMActionButtons = new ObservableCollection<TDMActionButton>
+            {
+                new TDMActionButton("Measure", MaterialIconKind.Finance, new RelayCommand(MeasureBranchAction)),
+                new TDMActionButton("Photo", MaterialIconKind.Camera,  new RelayCommand(PhotoBranchAction)),
+                new TDMActionButton("Reset", MaterialIconKind.Restart,  new RelayCommand(ResetBranchesAction)),
+            };
         }
 
         public ObservableCollection<BranchItem> Branches { get; private set; }
+        public Branch PhotoBranch { get; private set; }
+
+        public Branch MeasureBranch { get; private set; }
 
         [ObservableProperty]
         private String? _measuredPower = "ND";
 
-        public ObservableCollection<TDMActionButton> TDMActionButtons { get; } = new()
+        public ObservableCollection<TDMActionButton> TDMActionButtons { get; private set; }
+
+        private void MeasureBranchAction()
         {
-            new TDMActionButton("Measure",  MaterialIconKind.Finance),
-            new TDMActionButton("Photo",  MaterialIconKind.Camera),
-            new TDMActionButton("Reset",  MaterialIconKind.Restart),
-        };
+            MeasureBranch?.SendExternalDeviceTrigger();
+        }
+
+        private void PhotoBranchAction()
+        {
+            PhotoBranch?.SendExternalDeviceTrigger();
+        }
+
+        private void ResetBranchesAction()
+        {
+            return;
+        }
+
     }
 
-    public class TDMActionButton(string label, MaterialIconKind icon)
+    public class TDMActionButton(string label, MaterialIconKind icon, ICommand buttonCommand)
     {
         public string Label { get; } = label;
         public MaterialIconKind Icon { get; } = icon;
+
+        public ICommand ButtonCommand { get; } = buttonCommand;
     }
 
     public class BranchItem(Branch branch)

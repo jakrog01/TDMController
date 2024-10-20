@@ -31,10 +31,10 @@ namespace TDMController.ViewModels.TDMViewModels
         private MaterialIconKind _iconBackward= MaterialIconKind.ChevronLeft;
 
         [ObservableProperty]
-        private double _rotationMoveValue = 0;
+        private double? _rotationMoveValue = 0;
 
         [ObservableProperty]
-        private double _positionMoveValue = 0;
+        private double? _positionMoveValue = 0;
 
         public void MoveRotationDeviceForeward()
         {

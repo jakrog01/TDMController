@@ -10,28 +10,28 @@ namespace TDMController.Models
 {
     public class Branch
     {
-        internal SerialPort _serialPort { get;}
-        internal RotationDevice? _rotationDevice { get; }
-        internal IPositionDevice? _positionDevice { get; }
-        internal BranchStates _branchState;
+        internal SerialPort SerialPort { get;}
+        internal RotationDevice? RotationDevice { get; }
+        internal IPositionDevice? PositionDevice { get; }
+        internal BranchStates BranchState;
         internal int? BranchIndex { get; private set; }
 
         internal Branch(SerialPort serialPort, int? branchIndex, RotationDevice? rotationDevice, IPositionDevice? positionDevice)
         {
-            _serialPort = serialPort;
-            _branchState = BranchStates.Connection;
+            SerialPort = serialPort;
+            BranchState = BranchStates.Connection;
             BranchIndex = branchIndex;
-            _rotationDevice = rotationDevice;
-            _positionDevice = positionDevice;
+            RotationDevice = rotationDevice;
+            PositionDevice = positionDevice;
 
             try
             {
-                _serialPort.Open();
-                _branchState = BranchStates.Connection;
+                SerialPort.Open();
+                BranchState = BranchStates.Connection;
             }
             catch
             {
-                _branchState = BranchStates.Error;
+                BranchState = BranchStates.Error;
             }
 
             Task.Run(() => CheckBranchConnection());
@@ -48,33 +48,33 @@ namespace TDMController.Models
             const int TIMEOUT = 10000;
             var value = Convert.ToInt32(Math.Round(moveValue / 360.0 * 2038));
 
-            if (moveValue != 0 && _rotationDevice is not null)
+            if (moveValue != 0 && RotationDevice is not null)
             {
                 try
                 {
-                    var moveTask = Task.Run(() => _rotationDevice.MoveDevice(value));
+                    var moveTask = Task.Run(() => RotationDevice.MoveDevice(value));
                     if (!moveTask.Wait(TIMEOUT))
                     {
-                        _rotationDevice.State = RotationDeviceStates.Error;
+                        RotationDevice.State = RotationDeviceStates.Error;
                     }
                 }
                 catch
                 {
-                    _branchState = BranchStates.Error;
+                    BranchState = BranchStates.Error;
                 }
-                _rotationDevice.Position += moveValue;
-                _rotationDevice.Position %= 360;
+                RotationDevice.Position += moveValue;
+                RotationDevice.Position %= 360;
             }
         }
 
         public void MovePositionDevice(int moveValue)
         {
-            if (moveValue == 0 || _positionDevice is null)
+            if (moveValue == 0 || PositionDevice is null)
             {
                 return;
             }
 
-            if (_positionDevice is PODLDevice podl)
+            if (PositionDevice is PODLDevice podl)
             {
                 int TIMEOUT = 1500 + ((Math.Abs(moveValue) % 360) * 2000);
                 var value = Convert.ToInt32(Math.Round(moveValue / 360.0 * 200));
@@ -89,13 +89,13 @@ namespace TDMController.Models
                 }
                 catch
                 {
-                    _branchState = BranchStates.Error;
+                    BranchState = BranchStates.Error;
                 }
             }
             
         }
 
-        private void SendExternalDeviceTrigger()
+        public void SendExternalDeviceTrigger()
         {
             SendTriggerCommand("t", 2000);
         }
@@ -108,17 +108,17 @@ namespace TDMController.Models
             bool branchConnection = sendTriggerTask.Wait(TIMEOUT);
             if (!branchConnection)
             {
-                _branchState = BranchStates.Error;
+                BranchState = BranchStates.Error;
             }
 
             void waitForReplay(string commandJson)
             {
                 try
                 {
-                    _serialPort.Write(commandJson + "\n");
+                    SerialPort.Write(commandJson + "\n");
                     while (true)
                     {
-                        string receivedData = _serialPort.ReadLine();
+                        string receivedData = SerialPort.ReadLine();
                         if (receivedData.Contains("Done"))
                         {
                             break;
@@ -127,7 +127,7 @@ namespace TDMController.Models
                 }
                 catch
                 {
-                    _branchState = BranchStates.Error;
+                    BranchState = BranchStates.Error;
                 }
             }
         }

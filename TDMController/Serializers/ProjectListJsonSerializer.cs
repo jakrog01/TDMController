@@ -11,12 +11,28 @@ using TDMController.Models.TDMDevices;
 
 namespace TDMController.Serializers
 {
-    internal class BranchListJsonConverter : JsonConverter<List<Branch>>
+    internal class ProjectJsonConverter : JsonConverter<Project>
     {
-        public override List<Branch> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override Project Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var jsonObject = JsonSerializer.Deserialize<JsonElement>(ref reader);
             var listOfBranches = new List<Branch>();
+
+            int? photoBranchIndex = null;
+            int? measureBranchIndex = null;
+
+            Branch? measureBranch = null;
+            Branch? photoBranch = null;
+
+            if (jsonObject.TryGetProperty("MeasureBranch", out var measureIndex))
+            {
+                measureBranchIndex = measureIndex.GetInt32();
+            }
+
+            if (jsonObject.TryGetProperty("PhotoBranch", out var photoIndex))
+            {
+                photoBranchIndex = photoIndex.GetInt32();
+            }
 
             if (jsonObject.TryGetProperty("Branches", out var branchesProperty))
             {
@@ -32,9 +48,9 @@ namespace TDMController.Serializers
                         serialPort = new SerialPort(comProperty.GetString(),9600);
                     }
 
-                    if (branch.TryGetProperty("Index", out var indexProperty))
+                    if (branch.TryGetProperty("BranchIndex", out var indexProperty))
                     {
-                        index = comProperty.GetInt32();
+                        index = indexProperty.GetInt32();
                     }
 
                     if (branch.TryGetProperty("MotorList", out var MotorsProperty))
@@ -61,31 +77,40 @@ namespace TDMController.Serializers
                     }
                     var branchObject = new Branch(serialPort, index, rotationDevice, positionDevice);
                     listOfBranches.Add(branchObject);
+
+                    if (branchObject.BranchIndex == photoBranchIndex)
+                    {
+                        photoBranch = branchObject;
+                    }
+                    else if (branchObject.BranchIndex == measureBranchIndex)
+                    {
+                        measureBranch = branchObject;
+                    }
                 }
             }
-            return listOfBranches;
+            return new Project(listOfBranches, photoBranch, measureBranch);
         }
 
-        public override void Write(Utf8JsonWriter writer, List<Branch> value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, Project value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
             writer.WriteStartArray("Branches");
-            foreach (var branch in value)
+            foreach (var branch in value.Branches)
             {
                 writer.WriteStartObject();
-                writer.WriteString("Com", branch._serialPort.PortName);
+                writer.WriteString("Com", branch.SerialPort.PortName);
 
                 writer.WriteStartArray("MotorList");
 
                 writer.WriteStartObject();
-                writer.WritePropertyName(branch._rotationDevice.GetType().Name);
-                var rotationDeviceJson = branch._rotationDevice.ToJson();
+                writer.WritePropertyName(branch.RotationDevice.GetType().Name);
+                var rotationDeviceJson = branch.RotationDevice.ToJson();
                 writer.WriteRawValue(rotationDeviceJson);
                 writer.WriteEndObject();
 
                 writer.WriteStartObject();
-                writer.WritePropertyName(branch._positionDevice.GetType().Name);
-                var positionDeviceJson = branch._positionDevice.ToJson();
+                writer.WritePropertyName(branch.PositionDevice.GetType().Name);
+                var positionDeviceJson = branch.PositionDevice.ToJson();
                 writer.WriteRawValue(positionDeviceJson);
                 writer.WriteEndObject();
 
