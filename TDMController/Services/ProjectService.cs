@@ -13,6 +13,8 @@ namespace TDMController.Services
     public interface IProjectService
     {
         ObservableCollection<Branch> BranchList { get; }
+        
+        string Key { get; }
 
         Branch PhotoBranch { get; }
 
@@ -29,6 +31,8 @@ namespace TDMController.Services
         public Branch PhotoBranch { get; private set; } = null;
 
         public Branch MeasureBranch { get; private set; } = null;
+
+        public string Key { get; private set; } = null;
 
         public void LoadCollectionFromFile(string path)
         {
@@ -61,6 +65,7 @@ namespace TDMController.Services
                 BranchList = project.Branches;
                 PhotoBranch = project.PhotoBranch;
                 MeasureBranch = project.MeasureBranch;
+                Key = project.GetKey(project.Branches);
             }
         }
     }
