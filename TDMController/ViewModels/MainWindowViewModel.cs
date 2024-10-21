@@ -6,7 +6,7 @@ using Material.Icons;
 using TDMController.ViewModels.TDMViewModels;
 using TDMController.Models;
 using TDMController.Models.TDMDevices;
-using System.IO.Ports;
+using System.IO;
 using TDMController.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,14 +16,27 @@ namespace TDMController.ViewModels
     {
 
         private readonly IProjectService _branchCollectionService;
+        private readonly ILastProjectService _lastProjectService;
         private readonly IServiceProvider _serviceProvider;
 
-        public MainWindowViewModel(IProjectService branchCollectionService, IServiceProvider serviceProvider)
+        public MainWindowViewModel(IProjectService branchCollectionService, IServiceProvider serviceProvider, ILastProjectService lastProjectService)
         {
             _branchCollectionService = branchCollectionService;
             _serviceProvider = serviceProvider;
+            _lastProjectService = lastProjectService;
 
             _currentPage = (ViewModelBase)_serviceProvider.GetRequiredService(typeof(TDMPageViewModel));
+
+            if (_lastProjectService.LastProject != null && File.Exists(_lastProjectService.LastProject))
+            {
+                try
+                {
+                    _branchCollectionService.LoadCollectionFromFile(_lastProjectService.LastProject);
+                }
+                catch (Exception ex)
+                {
+                }
+            }
         }
 
         public ObservableCollection<Branch> BranchCollection => _branchCollectionService.BranchList;

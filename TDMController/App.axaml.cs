@@ -36,6 +36,9 @@ namespace TDMController
                 Services = serviceCollection.BuildServiceProvider();
                 var serviceProvider = serviceCollection.BuildServiceProvider();
 
+                var lastProjectService = Services.GetRequiredService<ILastProjectService>();
+                lastProjectService.LoadPathFromFile();
+
                 desktop.MainWindow = new MainWindow
                 {
                     DataContext = Services.GetRequiredService<MainWindowViewModel>(),
@@ -48,12 +51,13 @@ namespace TDMController
         private void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IProjectService, ProjectService>();
+            services.AddSingleton<ILastProjectService, LastProjectService>();
 
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<TDMPageViewModel>();
             services.AddTransient<SeriesPageViewModel>();
             services.AddTransient<ProjectsPageViewModel>();
-
+            
             services.AddSingleton<IServiceProvider>(sp => sp);
 
         }

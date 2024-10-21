@@ -17,13 +17,15 @@ namespace TDMController.ViewModels
     {
         private readonly IProjectService _projectCollectionService;
         private readonly IServiceProvider _serviceProvider;
+        private readonly ILastProjectService _lastProjectService;
 
         public ObservableCollection<TDMActionButton> TDMActionButtons { get; private set; }
 
-        public ProjectsPageViewModel(IProjectService branchCollectionService, IServiceProvider serviceProvider)
+        public ProjectsPageViewModel(IProjectService branchCollectionService, IServiceProvider serviceProvider, ILastProjectService lastProjectService)
         {
             _projectCollectionService = branchCollectionService;
             _serviceProvider = serviceProvider;
+            _lastProjectService = lastProjectService;
 
             TDMActionButtons = new ObservableCollection<TDMActionButton>
             {
@@ -43,7 +45,15 @@ namespace TDMController.ViewModels
             if (files.Count >= 1)
             {
                 var filePath = files[0].Path.ToString();
-                _projectCollectionService.LoadCollectionFromFile(filePath);
+                try
+                {
+                    _projectCollectionService.LoadCollectionFromFile(filePath);
+                    _lastProjectService.SaveNewPath(filePath);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
         }
 
