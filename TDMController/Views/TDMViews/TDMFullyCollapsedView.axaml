@@ -46,7 +46,7 @@
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
 					<ItemsControl.ItemTemplate>
-						<DataTemplate DataType="vm:TDMActionButton">
+						<DataTemplate DataType="m:TDMActionButton">
 							<Button Classes="actionButton" Command="{Binding ButtonCommand}" Margin="5,0,5,0" Width="50">
 								<materialIcons:MaterialIcon Kind="{Binding Icon}" Width="25" Height="25"
 														Foreground="#00B394"/>

@@ -22,7 +22,6 @@ namespace TDMController.ViewModels
         {
             _branchCollectionService = branchCollectionService;
             _serviceProvider = serviceProvider;
-            _branchCollectionService.LoadCollectionFromFile("ddd");
 
             _currentPage = (ViewModelBase)_serviceProvider.GetRequiredService(typeof(TDMPageViewModel));
         }

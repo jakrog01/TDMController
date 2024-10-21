@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO.Ports;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using TDMController.Models.TDMDevices;
 using TDMController.Models.TDMDevices.PositionDevices;

@@ -32,8 +32,18 @@ namespace TDMController.Services
 
         public void LoadCollectionFromFile(string path)
         {
+            foreach (Branch branch in BranchList) { 
+            
+                if (branch.SerialPort.IsOpen)
+                {
+                   branch.SerialPort.Close();
+                }
+            }
+
             BranchList.Clear();
-            string filePath = System.IO.Path.GetFullPath(Environment.CurrentDirectory + @"\UserProjects\Project2.json");
+
+            Uri uri = new Uri(path);
+            string filePath = uri.LocalPath;
             JsonSerializerOptions options = new JsonSerializerOptions();
             options.Converters.Add(new ProjectJsonConverter());
             options.WriteIndented = true;

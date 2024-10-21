@@ -2,7 +2,55 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:TDMController.ViewModels"
+			 xmlns:m="using:TDMController.Models"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TDMController.Views.ProjectsPageView">
-  Projects!
+             x:Class="TDMController.Views.ProjectsPageView"
+			 x:DataType="vm:ProjectsPageViewModel">
+
+	<Design.DataContext>
+		<vm:ProjectsPageViewModel/>
+	</Design.DataContext>
+	
+	<Border CornerRadius="20 0 0 0"
+						Background="#18242a">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+
+			<Grid VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="65" Grid.Row="0">
+
+				<Grid.Background>
+					<SolidColorBrush Color="#0E1414" Opacity="0.2"/>
+				</Grid.Background>
+
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+
+				<ItemsControl ItemsSource="{Binding TDMActionButtons}" HorizontalAlignment="Right" Margin="0,0,10,0">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel Orientation="Horizontal" />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate DataType="m:TDMActionButton">
+							<Button Classes="actionButton" Command="{Binding ButtonCommand}" Margin="5,0,5,0">
+								<StackPanel Orientation="Horizontal" Spacing="10">
+									<materialIcons:MaterialIcon Kind="{Binding Icon}" Width="25" Height="25"
+															Foreground="#00B394"/>
+									<TextBlock Text="{Binding Label}" VerticalAlignment="Center"/>
+								</StackPanel>
+							</Button>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+				
+			</Grid>
+		</Grid>
+	</Border>
 </UserControl>

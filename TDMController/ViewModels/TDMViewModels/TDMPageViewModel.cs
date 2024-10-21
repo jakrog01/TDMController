@@ -4,10 +4,7 @@ using Material.Icons;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+
 using TDMController.Models;
 using TDMController.Services;
 
@@ -64,14 +61,6 @@ namespace TDMController.ViewModels.TDMViewModels
             return;
         }
 
-    }
-
-    public class TDMActionButton(string label, MaterialIconKind icon, ICommand buttonCommand)
-    {
-        public string Label { get; } = label;
-        public MaterialIconKind Icon { get; } = icon;
-
-        public ICommand ButtonCommand { get; } = buttonCommand;
     }
 
     public class BranchItem(Branch branch)
