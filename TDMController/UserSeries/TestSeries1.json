@@ -1,0 +1,23 @@
+{
+  "ProjectKey": "R1P2",
+  "TakePhoto": true,
+  "Measure": false,
+  "Sequences": [
+    {
+      "Repeat": 6,
+      "ActionPerStep": 1,
+      "Commands": [
+        60,
+        0
+      ]
+    },
+    {
+      "Repeat": 4,
+      "ActionPerStep": 1,
+      "Commands": [
+        90,
+        0
+      ]
+    }
+  ]
+}

@@ -7,8 +7,7 @@
       "BranchIndex": 1,
       "MotorList": [
         {
-          "RotationMotor": { "Direction": 1 },
-          "TLPositionDevice" :  {"SerialNumber":  "2421421"}
+          "RotationMotor": { "Direction": 1 }
         }
       ]
     },

@@ -10,6 +10,7 @@ using TDMController.Views;
 using TDMController.Services;
 using System;
 using TDMController.Views.TDMViews;
+using TDMController.Models.Factories;
 
 namespace TDMController
 {
@@ -53,7 +54,10 @@ namespace TDMController
             services.AddSingleton<IProjectService, ProjectService>();
             services.AddSingleton<ILastProjectService, LastProjectService>();
 
+            services.AddSingleton<RunningSeriesPageViewModelFactory>();
             services.AddTransient<MainWindowViewModel>();
+            services.AddTransient<NewSeriesPageViewModel>();
+
             services.AddTransient<TDMPageViewModel>();
             services.AddTransient<SeriesPageViewModel>();
             services.AddTransient<ProjectsPageViewModel>();

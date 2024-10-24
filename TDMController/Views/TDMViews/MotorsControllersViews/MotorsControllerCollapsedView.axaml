@@ -33,7 +33,7 @@
 															Foreground="#00B394"/>
 							</Button>
 						</StackPanel>
-						<NumericUpDown Classes="MoveValue" Value="{Binding RotationMoveValue, Mode=TwoWay}" Width="100" Height="45" FontSize="25"></NumericUpDown>
+						<NumericUpDown Classes="MoveValue" Minimum="0" Maximum="359" Value="{Binding RotationMoveValue, Mode=TwoWay}" Width="100" Height="45" FontSize="25"></NumericUpDown>
 					</UniformGrid>
 
 					<UniformGrid Rows="3" Margin="10,0,10,10">

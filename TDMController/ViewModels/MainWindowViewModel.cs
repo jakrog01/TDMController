@@ -35,8 +35,13 @@ namespace TDMController.ViewModels
                 }
                 catch (Exception ex)
                 {
+                    _currentPage = (ViewModelBase)_serviceProvider.GetRequiredService(typeof(ProjectsPageViewModel));
                 }
             }
+            else
+            {
+                _currentPage = (ViewModelBase)_serviceProvider.GetRequiredService(typeof(ProjectsPageViewModel));
+            }    
         }
 
         public ObservableCollection<Branch> BranchCollection => _branchCollectionService.BranchList;

@@ -37,6 +37,7 @@
     <None Remove="Kinesis\Xceed.Wpf.Toolkit.dll" />
     <None Remove="Settings\LastProject.json" />
     <None Remove="UserProjects\Project2.json" />
+    <None Remove="UserSeries\TestSeries1.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,6 +82,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UserProjects\Project2.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UserSeries\TestSeries1.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -134,5 +138,14 @@
     <Content Include="Kinesis\Xceed.Wpf.Toolkit.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\SeriesViews\NewSeriesPageView.axaml.cs">
+      <DependentUpon>NewSeriesPageView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SeriesViews\RunningSeriesPageView.axaml.cs">
+      <DependentUpon>RunningSeriesPageView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

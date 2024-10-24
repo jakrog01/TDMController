@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO.Ports;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -102,10 +103,25 @@ namespace TDMController.Models
 
 
         }
+        public void MoveMotorsInSequence(List<int> commands)
+        {
+            int j = 0;
+            if (RotationDevice is not null)
+            {
+                MoveRotationDevice(commands[j]);
+                j++;
+            }
+
+            if (PositionDevice is not null)
+            {
+                MovePositionDevice(commands[j]);
+            }
+            return;
+        }
 
         public void SendExternalDeviceTrigger()
         {
-            SendTriggerCommand("t", 2000);
+            SendTriggerCommand("c", 2000);
         }
 
         private void SendTriggerCommand(string commandType, int value)

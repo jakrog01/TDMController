@@ -1,0 +1,75 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:TDMController.ViewModels"
+			 xmlns:m="using:TDMController.Models"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TDMController.Views.RunningSeriesPageView"
+			 x:DataType="vm:RunningSeriesPageViewModel">
+
+	<Design.DataContext>
+		<vm:RunningSeriesPageViewModel/>
+	</Design.DataContext>
+
+	<Border CornerRadius="20 0 0 0"
+						Background="#18242a">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+
+			<Grid VerticalAlignment="Center" HorizontalAlignment="Stretch" Height="65" Grid.Row="0">
+
+				<Grid.Background>
+					<SolidColorBrush Color="#0E1414" Opacity="0.2"/>
+				</Grid.Background>
+
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+
+				<Grid VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,10,10,10">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+
+					<ProgressBar Grid.Column="0" BorderThickness="1" BorderBrush="#00B394"
+								 Background="#0e1414" Foreground="#00B394" Height="20"
+								 Margin="10,10,10,10" Minimum="{Binding MinProgressBar}" Maximum="{Binding MaxProgressBar}" Value="{Binding ValueProgressBar}" />
+
+					<Button Grid.Column="1" x:Name="ActionButton" Classes="actionButton" Margin="5,0,5,0" Command="{Binding ButtonCommand}" Height="35" Width="35">
+						<materialIcons:MaterialIcon Width="20" Height="20" Kind="{Binding ButtonIcon}"
+													Foreground="#00B394" />
+					</Button>
+				</Grid>
+				
+			</Grid>
+
+			<Border BorderThickness="1" BorderBrush="#00B394" Margin="20,20,20,20" 
+					CornerRadius="15" Background="#0e1414" Grid.Row="1">
+
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+					<ItemsControl ItemsSource="{Binding Logs}" Margin="15,10,15,10">
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<StackPanel Orientation="Vertical" />
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
+
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<TextBlock Text="{Binding}" Foreground="White" />
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+					</ItemsControl>
+				</ScrollViewer>
+				
+			</Border>
+		</Grid>
+	</Border>
+	
+</UserControl>
