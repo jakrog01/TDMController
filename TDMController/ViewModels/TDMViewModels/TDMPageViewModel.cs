@@ -4,17 +4,20 @@ using Material.Icons;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Threading;
 using TDMController.Models;
 using TDMController.Models.TDMDevices;
 using TDMController.Services;
 
 namespace TDMController.ViewModels.TDMViewModels
 {
-    public partial class TDMPageViewModel : ViewModelBase
+    public partial class TDMPageViewModel : ViewModelBase, IDisposable
     {
         private readonly IProjectService _projectService;
+        private Timer _timer;
+        private int ndCounter;
+
         public TDMPageViewModel(IProjectService projectService)
         {
             _projectService = projectService;
@@ -31,16 +34,15 @@ namespace TDMController.ViewModels.TDMViewModels
             PhotoBranch = projectService.PhotoBranch;
             MeasureBranch = projectService.MeasureBranch;
 
-            TDMActionButtons = new ObservableCollection<TDMActionButton>
-            {
-                new TDMActionButton("Measure", MaterialIconKind.Finance, new RelayCommand(MeasureBranchAction)),
-                new TDMActionButton("Photo", MaterialIconKind.Camera,  new RelayCommand(PhotoBranchAction)),
-                new TDMActionButton("Reset", MaterialIconKind.Restart,  new RelayCommand(ResetBranchesAction)),
-            };
+            TDMActionButtons =
+            [
+                new ("Measure", MaterialIconKind.Finance, new RelayCommand(MeasureBranchAction)),
+                new ("Photo", MaterialIconKind.Camera,  new RelayCommand(PhotoBranchAction)),
+                new ("Reset", MaterialIconKind.Restart,  new RelayCommand(ResetBranchesAction)),
+            ];
 
             _powerMeter = new TLPowerMeter("USB0::0x1313::0x8078::P0028387::INSTR");
-
-            Task.Run(() =>  MeasurePower());
+            Task.Run(StartPowerMeasurement);
         }
 
         public ObservableCollection<BranchItem> Branches { get; private set; }
@@ -71,30 +73,42 @@ namespace TDMController.ViewModels.TDMViewModels
             {
                 Task.Run(() => branch.HomeDevices());
             }
-
-            Task.Run(() => MeasurePower());
         }
 
-        private void MeasurePower()
+        public Task StartPowerMeasurement()
         {
-            int ndCounter = 0;
-            while (ndCounter < 10)
+            _timer = new Timer(MeasurePower, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
+            return Task.CompletedTask;
+        }
+
+        public Task StopPowerMeasurement()
+        {
+            _timer?.Change(Timeout.Infinite, 0);
+            return Task.CompletedTask;
+        }
+
+        private void MeasurePower(Object? state)
+        {
+            if (_powerMeter is not null)
             {
-                if (_powerMeter is not null)
-                {
-                    MeasuredPower = _powerMeter.MeasurePowerWithUnit();
-                    if (MeasuredPower == "ND")
-                    {
-                        ndCounter++;
-                    }
-                }
-                else
-                {
-                    break;
-                }
+                MeasuredPower = _powerMeter.MeasurePowerWithUnit();
             }
 
-            return;
+            if (MeasuredPower == "ND")
+            {
+                ndCounter++;
+                if (ndCounter == 10)
+                {
+                    {
+                        Task.Run(StopPowerMeasurement);
+                    }
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            _timer?.Dispose();
         }
 
     }
