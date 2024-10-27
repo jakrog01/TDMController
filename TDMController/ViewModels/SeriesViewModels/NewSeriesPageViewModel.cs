@@ -24,7 +24,7 @@ namespace TDMController.ViewModels
 
         public ObservableCollection<TDMActionButton>? TDMActionButtons { get; private set; }
 
-        public NewSeriesPageViewModel( IServiceProvider serviceProvider, ILastProjectService lastProjectService)
+        public NewSeriesPageViewModel( IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
 
@@ -54,12 +54,13 @@ namespace TDMController.ViewModels
 
                 if (seriesObject != null)
                 {
-                    ViewModelBase anotherPageViewModel;
+                    RunningSeriesPageViewModel runningPageViewModel;
                     var runningPageFactory = _serviceProvider.GetService(typeof(RunningSeriesPageViewModelFactory));
                     if (runningPageFactory is RunningSeriesPageViewModelFactory factory)
                     {
-                        anotherPageViewModel = factory.CreateWithSequence(seriesObject);
-                        ChangePageAction?.Invoke(anotherPageViewModel);
+                        runningPageViewModel = factory.CreateWithSequence(seriesObject);
+                        runningPageViewModel.ChangePageAction = ChangePageAction;
+                        ChangePageAction?.Invoke(runningPageViewModel);
                     }
                 }
             }

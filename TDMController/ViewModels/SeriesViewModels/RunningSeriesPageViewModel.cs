@@ -5,6 +5,7 @@ using Material.Icons;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TDMController.Models;
@@ -18,6 +19,9 @@ namespace TDMController.ViewModels
         private readonly IProjectService _projectCollectionService;
         private readonly IServiceProvider _serviceProvider;
         private readonly Series? _series = null;
+        private CancellationTokenSource _seriesCancellationTokenSource = new CancellationTokenSource();
+        private CancellationToken _seriesCancellationToken;
+        public Action<ViewModelBase> ChangePageAction { get; set; }
 
         private bool _isRunning = false;
         public RunningSeriesPageViewModel(IProjectService projectService, IServiceProvider serviceProvider, Series series)
@@ -26,6 +30,7 @@ namespace TDMController.ViewModels
             _serviceProvider = serviceProvider;
             _series = series;
             _countOperationsInSeries();
+            _seriesCancellationToken = _seriesCancellationTokenSource.Token;
 
             Branches = projectService.BranchList;
             if (Branches.Count == 0)
@@ -83,7 +88,7 @@ namespace TDMController.ViewModels
         {
             if (!_isRunning)
             {
-                StartMeasurementAsync();
+                Task.Run(StartMeasurementAsync, _seriesCancellationToken);
             }
             else
             {
@@ -110,11 +115,13 @@ namespace TDMController.ViewModels
                 Logs.Add($"{DateTime.Now} > Started new series");
             });
 
+            int sequenceIndex = 0;
             foreach (Sequence sequence in _series.Sequences)
             {
+                sequenceIndex += 1;
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    Logs.Add($"{DateTime.Now} > Started new sequence");
+                    Logs.Add($"{DateTime.Now} > Started {sequenceIndex}. sequence. {_series.Sequences.Count - sequenceIndex} left");
                 });
 
                 for (int sequenceRepetition = 0; sequenceRepetition < sequence.Repeat; sequenceRepetition++)
@@ -122,7 +129,7 @@ namespace TDMController.ViewModels
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         ValueProgressBar += 1;
-                        Logs.Add($"{DateTime.Now} > Started {sequenceRepetition + 1}. repetition of sequence. {sequence.Repeat - (1 + sequenceRepetition)} left");
+                        Logs.Add($"{DateTime.Now} > Started {sequenceRepetition + 1}. repetition of {sequenceIndex}. sequence. {sequence.Repeat - (1 + sequenceRepetition)} left");
 
                         foreach (Branch branch in Branches)
                         {
@@ -175,7 +182,7 @@ namespace TDMController.ViewModels
                             Tasks.Add(measureTask);
                             await Dispatcher.UIThread.InvokeAsync(() =>
                             {
-                                Logs.Add($"{DateTime.Now} > Making maesurement");
+                                Logs.Add($"{DateTime.Now} > Making {actionNumber + 1}. maesurement");
                             });
                         }
 
@@ -185,20 +192,27 @@ namespace TDMController.ViewModels
                             Tasks.Add(photoTask);
                             await Dispatcher.UIThread.InvokeAsync(() =>
                             {
-                                Logs.Add($"{DateTime.Now} > Taking photo");
+                                Logs.Add($"{DateTime.Now} > Taking {actionNumber + 1}. photo");
                             });
                         }
                         await Task.WhenAll(Tasks);
                         Tasks.Clear();
+                        _seriesCancellationToken.ThrowIfCancellationRequested();
                     }
                 }
             }
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Logs.Add($"{DateTime.Now} > Series completed");
+            });
+
         }
 
         public void StopMeasurement()
         {
             _isRunning = false;
-            ButtonIcon = MaterialIconKind.PlayArrow;
+            _seriesCancellationTokenSource?.Cancel();
+            ChangePageAction?.Invoke(new NewSeriesPageViewModel(_serviceProvider));
         }
     }
 }

@@ -5,7 +5,7 @@
   "Sequences": [
     {
       "Repeat": 6,
-      "ActionPerStep": 1,
+      "ActionPerStep": 2,
       "Commands": [
         60,
         360
