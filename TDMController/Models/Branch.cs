@@ -196,6 +196,7 @@ namespace TDMController.Models
 
             if (commandType == "t")
             {
+                State = BranchStates.Ready;
                 return;
             }
 

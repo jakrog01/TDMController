@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TDMController.Models;
+using TDMController.Models.TDMDevices.States;
 using TDMController.Services;
 
 namespace TDMController.ViewModels
@@ -49,7 +50,7 @@ namespace TDMController.ViewModels
                 else
                 {
                     Logs.Add($"{DateTime.Now} > Series loaded successfully");
-                    Logs.Add($"{DateTime.Now} > Project keys are correct");
+                    Logs.Add($"{DateTime.Now} > The project key and series match");
                     _buttonCommand = new RelayCommand(OnButtonClick);
                 }
             }
@@ -116,14 +117,33 @@ namespace TDMController.ViewModels
                     Logs.Add($"{DateTime.Now} > Started new sequence");
                 });
 
-                for (int i = 0; i < sequence.Repeat; i++)
+                for (int sequenceRepetition = 0; sequenceRepetition < sequence.Repeat; sequenceRepetition++)
                 {
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         ValueProgressBar += 1;
-                        Logs.Add($"{DateTime.Now} > Started {i + 1}. repetition of sequence. {sequence.Repeat - (1 + i)} left");
+                        Logs.Add($"{DateTime.Now} > Started {sequenceRepetition + 1}. repetition of sequence. {sequence.Repeat - (1 + sequenceRepetition)} left");
+
+                        foreach (Branch branch in Branches)
+                        {
+                            if (branch.State == BranchStates.Error)
+                            {
+                                Logs.Add($"{DateTime.Now} > Problem with Branch {branch.BranchIndex}");
+                            }
+
+                            if (branch.PositionDevice?.State.HasFlag(PositionDeviceStates.Error) == true)
+                            {
+                                Logs.Add($"{DateTime.Now} > Problem with position device in Branch {branch.BranchIndex}");
+                            }
+
+                            if (branch.RotationDevice?.State.HasFlag(RotationDeviceStates.Error) == true)
+                            {
+                                Logs.Add($"{DateTime.Now} > Problem with rotation device in Branch {branch.BranchIndex}");
+                            }
+                        }
                     });
-                    int j = 0;
+
+                    int taskCounter = 0;
                     var Tasks = new List<Task>();
 
                     foreach (Branch branch in Branches)
@@ -131,14 +151,14 @@ namespace TDMController.ViewModels
                         var Commands = new List<int>();
                         if (branch.RotationDevice is not null)
                         {
-                            Commands.Add(sequence.Commands[j]);
-                            j++;
+                            Commands.Add(sequence.Commands[taskCounter]);
+                            taskCounter++;
                         }
 
                         if (branch.PositionDevice is not null)
                         {
-                            Commands.Add(sequence.Commands[j]);
-                            j++;
+                            Commands.Add(sequence.Commands[taskCounter]);
+                            taskCounter++;
                         }
 
                         var sequenceTask = Task.Run(() => branch.MoveMotorsInSequence(Commands));
@@ -147,7 +167,7 @@ namespace TDMController.ViewModels
 
                     await Task.WhenAll(Tasks);
 
-                    for (int k =0; k < sequence.ActionPerStep; k++)
+                    for (int actionNumber =0; actionNumber < sequence.ActionPerStep; actionNumber++)
                     {
                         if (_projectCollectionService.MeasureBranch is not null && _series.Measure)
                         {
@@ -155,7 +175,7 @@ namespace TDMController.ViewModels
                             Tasks.Add(measureTask);
                             await Dispatcher.UIThread.InvokeAsync(() =>
                             {
-                                Logs.Add($"{DateTime.Now} > Makeing maesurement");
+                                Logs.Add($"{DateTime.Now} > Making maesurement");
                             });
                         }
 

@@ -73,6 +73,9 @@ namespace TDMController.ViewModels.TDMViewModels
             {
                 Task.Run(() => branch.HomeDevices());
             }
+
+            ndCounter = 0;
+            Task.Run(StartPowerMeasurement);
         }
 
         public Task StartPowerMeasurement()
