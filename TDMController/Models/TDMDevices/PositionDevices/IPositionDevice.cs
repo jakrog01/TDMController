@@ -5,6 +5,6 @@ namespace TDMController.Models.TDMDevices
 {
     internal interface IPositionDevice : ITDMDevice
     {
-        internal PositionDeviceStates State { get; }
+        internal PositionDeviceStates State { get; set; }
     }
 }

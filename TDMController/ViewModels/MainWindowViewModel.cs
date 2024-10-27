@@ -15,13 +15,13 @@ namespace TDMController.ViewModels
     public partial class MainWindowViewModel : ViewModelBase
     {
 
-        private readonly IProjectService _branchCollectionService;
+        private readonly IProjectService _projectService;
         private readonly ILastProjectService _lastProjectService;
         private readonly IServiceProvider _serviceProvider;
 
         public MainWindowViewModel(IProjectService branchCollectionService, IServiceProvider serviceProvider, ILastProjectService lastProjectService)
         {
-            _branchCollectionService = branchCollectionService;
+            _projectService = branchCollectionService;
             _serviceProvider = serviceProvider;
             _lastProjectService = lastProjectService;
 
@@ -31,7 +31,7 @@ namespace TDMController.ViewModels
             {
                 try
                 {
-                    _branchCollectionService.LoadCollectionFromFile(_lastProjectService.LastProject);
+                    _projectService.LoadCollectionFromFile(_lastProjectService.LastProject);
                 }
                 catch (Exception ex)
                 {
@@ -44,7 +44,7 @@ namespace TDMController.ViewModels
             }    
         }
 
-        public ObservableCollection<Branch> BranchCollection => _branchCollectionService.BranchList;
+        public ObservableCollection<Branch> BranchCollection => _projectService.BranchList;
         
         [ObservableProperty]
         private bool _isPaneOpen = false;

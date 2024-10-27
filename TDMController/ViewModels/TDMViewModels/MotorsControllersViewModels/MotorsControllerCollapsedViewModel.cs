@@ -1,13 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TDMController.Models;
+using TDMController.Models.TDMDevices.States;
 
 namespace TDMController.ViewModels.TDMViewModels
 {
@@ -16,7 +12,8 @@ namespace TDMController.ViewModels.TDMViewModels
 
         public Branch Branch { get;}
 
-        public MotorsControllerCollapsedViewModel(Branch branch) { 
+        public MotorsControllerCollapsedViewModel(Branch branch)
+        { 
             Branch = branch;
             BranchLabel = $"BRANCH {branch.BranchIndex}";
         }
@@ -39,25 +36,25 @@ namespace TDMController.ViewModels.TDMViewModels
         public void MoveRotationDeviceForeward()
         {
             var value = Convert.ToInt32(RotationMoveValue);
-            Branch.MoveRotationDevice(value);
+            Task.Run(() => Branch.MoveRotationDevice(value));
         }
 
         public void MoveRotationDeviceBackward()
         {
             var value = - Convert.ToInt32(RotationMoveValue);
-            Branch.MoveRotationDevice(value);
+            Task.Run(() => Branch.MoveRotationDevice(value));
         }
 
         public void MovePositionDeviceForeward()
         {
             var value = Convert.ToInt32(PositionMoveValue);
-            Branch.MovePositionDevice(value);
+            Task.Run(() =>  Branch.MovePositionDevice(value));
         }
 
         public void MovePositionDeviceBackward()
         {
             var value = -Convert.ToInt32(PositionMoveValue);
-            Branch.MovePositionDevice(value);
+            Task.Run(() => Branch.MovePositionDevice(value));
         }
     }
 }

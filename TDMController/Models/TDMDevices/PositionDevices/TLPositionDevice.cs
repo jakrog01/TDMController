@@ -119,6 +119,31 @@ namespace TDMController.Models.TDMDevices.PositionDevices
                 State = PositionDeviceStates.Error;
             }
         }
+
+        public void HomeMotor()
+        {
+            try
+            {
+                if (KCubeDevice is not null && ((State & PositionDeviceStates.Error) != PositionDeviceStates.Error))
+                {
+                    KCubeDevice.Home(60000);
+                    Position = 0;
+                }
+
+                if (KCubeDevice is not null)
+                {
+                    KCubeDevice.DisableDevice();
+                    Thread.Sleep(1000);
+                    KCubeDevice.EnableDevice();
+                }
+            }
+            catch
+            {
+                State = PositionDeviceStates.Error;
+            }
+
+
+        }
         public string ToJson() 
         {
             return JsonSerializer.Serialize(this);

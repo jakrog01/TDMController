@@ -70,7 +70,7 @@ namespace TDMController.ViewModels
         private ICommand? _buttonCommand = null;
 
         [ObservableProperty]
-        private int _maxProgressBar = 5;
+        private int _maxProgressBar = 0;
 
         [ObservableProperty]
         private int _minProgressBar = 0;

@@ -17,13 +17,14 @@ namespace TDMController.Models.TDMDevices
             Position = 0;
             Direction = direction;
             _serialPort = serialPort;
+            State = RotationDeviceStates.Error;
         }
 
         public void MoveDevice(int value)
         {
             State = RotationDeviceStates.Busy;
             string commandJson = JsonSerializer.Serialize(new ArduinoCommand("r", value * Direction));
-            _serialPort.Write(commandJson + "\n");
+            _serialPort!.Write(commandJson + "\n");
             while (true)
             {
                 string receivedData = _serialPort.ReadLine();

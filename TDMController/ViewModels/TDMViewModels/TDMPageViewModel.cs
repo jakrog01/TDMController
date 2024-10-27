@@ -4,7 +4,8 @@ using Material.Icons;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
+using System.Threading;
+using System.Threading.Tasks;
 using TDMController.Models;
 using TDMController.Services;
 
@@ -12,10 +13,11 @@ namespace TDMController.ViewModels.TDMViewModels
 {
     public partial class TDMPageViewModel : ViewModelBase
     {
-
-        public TDMPageViewModel(IProjectService projectCollectionService)
+        private readonly IProjectService _projectService;
+        public TDMPageViewModel(IProjectService projectService)
         {
-            var branchCollection = projectCollectionService.BranchList;
+            _projectService = projectService;
+            var branchCollection = projectService.BranchList;
             var branches = new List<BranchItem>();
 
             for (var i = 0; i < branchCollection.Count; i++)
@@ -25,8 +27,8 @@ namespace TDMController.ViewModels.TDMViewModels
             }
 
             Branches = new ObservableCollection<BranchItem>(branches);
-            PhotoBranch = projectCollectionService.PhotoBranch;
-            MeasureBranch = projectCollectionService.MeasureBranch;
+            PhotoBranch = projectService.PhotoBranch;
+            MeasureBranch = projectService.MeasureBranch;
 
             TDMActionButtons = new ObservableCollection<TDMActionButton>
             {
@@ -48,17 +50,20 @@ namespace TDMController.ViewModels.TDMViewModels
 
         private void MeasureBranchAction()
         {
-            MeasureBranch?.SendExternalDeviceTrigger();
+            Task.Run(() => MeasureBranch?.SendExternalDeviceTrigger());
         }
 
         private void PhotoBranchAction()
         {
-            PhotoBranch?.SendExternalDeviceTrigger();
+            Task.Run(() => PhotoBranch?.SendExternalDeviceTrigger());
         }
 
         private void ResetBranchesAction()
         {
-            return;
+            foreach (Branch branch in _projectService.BranchList)
+            {
+                Task.Run(() => branch.HomeDevices());
+            }
         }
 
     }

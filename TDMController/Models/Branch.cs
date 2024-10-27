@@ -14,32 +14,38 @@ namespace TDMController.Models
         internal SerialPort SerialPort { get;}
         internal RotationDevice? RotationDevice { get; }
         internal IPositionDevice? PositionDevice { get; }
-        internal BranchStates BranchState;
+        internal BranchStates State;
         internal int? BranchIndex { get; private set; }
 
         internal Branch(SerialPort serialPort, int? branchIndex, RotationDevice? rotationDevice, IPositionDevice? positionDevice)
         {
             SerialPort = serialPort;
-            BranchState = BranchStates.Connection;
             BranchIndex = branchIndex;
             RotationDevice = rotationDevice;
             PositionDevice = positionDevice;
             try
             {
                 SerialPort.Open();
-                BranchState = BranchStates.Connection;
+                State = BranchStates.Ready;
             }
             catch
             {
-                BranchState = BranchStates.Error;
+                State = BranchStates.Error;
             }
-
-            Task.Run(() => CheckBranchConnection());
+            
+            if (SerialPort.IsOpen)
+            {
+                Task.Run(() => CheckBranchConnection());
+            }
         }
 
         private void CheckBranchConnection()
         {
-            SendTriggerCommand("c", 2000);
+            if (State == BranchStates.Ready)
+            {
+                State = BranchStates.Busy;
+                SendTriggerCommand("c", 1000);
+            }
         }
 
         public void MoveRotationDevice(int moveValue)
@@ -48,34 +54,74 @@ namespace TDMController.Models
             const int TIMEOUT = 10000;
             var value = Convert.ToInt32(Math.Round(moveValue / 360.0 * 2038));
 
-            if (moveValue != 0 && RotationDevice is not null)
+            if (moveValue != 0 && RotationDevice is not null &&
+                ((State & BranchStates.Ready) == BranchStates.Ready) &&
+                ((RotationDevice.State & RotationDeviceStates.Ready) == RotationDeviceStates.Ready))
             {
+                State = BranchStates.Busy;
                 try
                 {
                     var moveTask = Task.Run(() => RotationDevice.MoveDevice(value));
                     if (!moveTask.Wait(TIMEOUT))
                     {
                         RotationDevice.State = RotationDeviceStates.Error;
+                        return;
                     }
                 }
                 catch
                 {
-                    BranchState = BranchStates.Error;
+                    State = BranchStates.Error;
+                    return;
                 }
                 RotationDevice.Position += moveValue;
                 RotationDevice.Position %= 360;
+
+                if (RotationDevice.Position == 0)
+                {
+                    RotationDevice.State |= RotationDeviceStates.Home;
+                }
+
+                State = BranchStates.Ready;
             }
         }
 
+        public void HomeDevices()
+        {
+            if (RotationDevice != null && RotationDevice.State == RotationDeviceStates.Ready && State == BranchStates.Ready)
+            {
+                var MoveTask = Task.Run(() => MoveRotationDevice(-RotationDevice.Position));
+                MoveTask.Wait();
+            }
+
+            if (PositionDevice != null)
+            {
+                if (PositionDevice is TLPositionDevice podlDevice)
+                {
+                    var MoveTask = Task.Run(() => MovePositionDevice(-podlDevice.Position));
+                    MoveTask.Wait();
+                }
+
+                else if (PositionDevice is TLPositionDevice tlPositionMotor)
+                {
+                    var MoveTask = Task.Run(() => tlPositionMotor.HomeMotor());
+                    MoveTask.Wait();
+                }
+            }
+
+            Task.Run(() => CheckBranchConnection());
+        }
         public void MovePositionDevice(int moveValue)
         {
-            if (moveValue == 0 || PositionDevice is null)
+            if (moveValue == 0 || PositionDevice is null ||
+                ((State & BranchStates.Ready) == 0) ||
+                ((PositionDevice.State & PositionDeviceStates.Ready) == 0))
             {
                 return;
             }
 
             if (PositionDevice is PODLDevice podl)
             {
+                State = BranchStates.Busy;
                 int TIMEOUT = 1500 + ((Math.Abs(moveValue) % 360) * 2000);
                 var value = Convert.ToInt32(Math.Round(moveValue / 360.0 * 200));
                 try
@@ -84,13 +130,22 @@ namespace TDMController.Models
                     if (!MoveTask.Wait(TIMEOUT))
                     {
                         podl.State = PositionDeviceStates.Error;
+                        return;
                     }
-                    podl.Position += moveValue;
                 }
                 catch
                 {
-                    BranchState = BranchStates.Error;
+                    State = BranchStates.Error;
+                    return;
                 }
+                podl.Position += moveValue;
+
+                if (podl.Position == 0)
+                {
+                    PositionDevice.State |= PositionDeviceStates.Home;
+                }
+
+                State = BranchStates.Ready;
             }
 
             else if (PositionDevice is TLPositionDevice tlPositionMotor)
@@ -100,7 +155,6 @@ namespace TDMController.Models
                     var MoveTask = Task.Run(() => tlPositionMotor.MoveDevice(moveValue));
                 }
             }
-
 
         }
         public void MoveMotorsInSequence(List<int> commands)
@@ -121,7 +175,11 @@ namespace TDMController.Models
 
         public void SendExternalDeviceTrigger()
         {
-            SendTriggerCommand("c", 2000);
+            if (State == BranchStates.Ready)
+            {
+                State = BranchStates.Busy;
+                SendTriggerCommand("t", 2000);
+            }
         }
 
         private void SendTriggerCommand(string commandType, int value)
@@ -132,8 +190,28 @@ namespace TDMController.Models
             bool branchConnection = sendTriggerTask.Wait(TIMEOUT);
             if (!branchConnection)
             {
-                BranchState = BranchStates.Error;
+                State = BranchStates.Error;
+                return;
             }
+
+            if (commandType == "t")
+            {
+                return;
+            }
+
+            if (RotationDevice is not null)
+            {
+                RotationDevice.State &= ~RotationDeviceStates.Error;
+                RotationDevice.State |= RotationDeviceStates.Ready;
+            }
+
+            if (PositionDevice is not null)
+            {
+                PositionDevice.State &= ~PositionDeviceStates.Error;
+                PositionDevice.State |= PositionDeviceStates.Ready;
+            }
+
+            State = BranchStates.Ready;
 
             void waitForReplay(string commandJson)
             {
@@ -151,7 +229,7 @@ namespace TDMController.Models
                 }
                 catch
                 {
-                    BranchState = BranchStates.Error;
+                    State = BranchStates.Error;
                 }
             }
         }
