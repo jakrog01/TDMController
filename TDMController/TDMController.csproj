@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <None Remove="Assets\Polariton.ico" />
+    <None Remove="Kinesis\PM100D_64.dll" />
     <None Remove="Kinesis\Thorlabs.MotionControl.DeviceManager.dll" />
     <None Remove="Kinesis\Thorlabs.MotionControl.DeviceManagerCLI.dll" />
     <None Remove="Kinesis\Thorlabs.MotionControl.GenericMotorCLI.dll" />
@@ -34,6 +35,11 @@
     <None Remove="Kinesis\Thorlabs.MotionControl.Tools.Logging.dll" />
     <None Remove="Kinesis\Thorlabs.MotionControl.Tools.WPF.dll" />
     <None Remove="Kinesis\Thorlabs.MotionControl.Tools.WPF.UI.dll" />
+    <None Remove="Kinesis\Thorlabs.PM100D_64.Interop.dll" />
+    <None Remove="Kinesis\Thorlabs.TLPMX_64.Interop.dll" />
+    <None Remove="Kinesis\Thorlabs.TLPM_64.Interop.dll" />
+    <None Remove="Kinesis\TLPM.h" />
+    <None Remove="Kinesis\TLPM_64.dll" />
     <None Remove="Kinesis\Xceed.Wpf.Toolkit.dll" />
     <None Remove="Settings\LastProject.json" />
     <None Remove="UserProjects\Project2.json" />
@@ -78,6 +84,24 @@
 
   <ItemGroup>
     <Content Include="Assets\Polariton.ico" />
+    <Content Include="Kinesis\PM100D_64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Kinesis\Thorlabs.PM100D_64.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Kinesis\Thorlabs.TLPMX_64.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Kinesis\Thorlabs.TLPM_64.Interop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Kinesis\TLPM.h">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Kinesis\TLPM_64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Settings\LastProject.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -102,41 +126,56 @@
     <Reference Include="Thorlabs.MotionControl.PrivateInternal">
       <HintPath>E:\NewPolariton\NewPolaritonBackend\Kinesis\Thorlabs.MotionControl.PrivateInternal.dll</HintPath>
     </Reference>
+    <Reference Include="Thorlabs.MotionControl.Tools.Common">
+      <HintPath>E:\NewPolariton\NewPolaritonBackend\Kinesis\Thorlabs.MotionControl.Tools.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Thorlabs.MotionControl.Tools.Logging">
+      <HintPath>E:\NewPolariton\NewPolaritonBackend\Kinesis\Thorlabs.MotionControl.Tools.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Thorlabs.PM100D_64.Interop">
+      <HintPath>E:\NewPolariton\NewPolaritonBackend\Kinesis\Thorlabs.PM100D_64.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="Thorlabs.TLPM_64.Interop">
+      <HintPath>E:\NewPolariton\NewPolaritonBackend\Kinesis\Thorlabs.TLPM_64.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit">
+      <HintPath>E:\NewPolariton\NewPolaritonBackend\Kinesis\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Kinesis\Thorlabs.MotionControl.DeviceManager.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Kinesis\Thorlabs.MotionControl.DeviceManagerCLI.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Kinesis\Thorlabs.MotionControl.GenericMotorCLI.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Kinesis\Thorlabs.MotionControl.KCube.BrushlessMotor.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Kinesis\Thorlabs.MotionControl.KCube.BrushlessMotorCLI.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Kinesis\Thorlabs.MotionControl.PrivateInternal.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Kinesis\Thorlabs.MotionControl.Tools.Common.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Kinesis\Thorlabs.MotionControl.Tools.Logging.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Kinesis\Thorlabs.MotionControl.Tools.WPF.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Kinesis\Thorlabs.MotionControl.Tools.WPF.UI.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Kinesis\Xceed.Wpf.Toolkit.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

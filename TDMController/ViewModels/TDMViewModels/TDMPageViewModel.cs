@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using TDMController.Models;
+using TDMController.Models.TDMDevices;
 using TDMController.Services;
 
 namespace TDMController.ViewModels.TDMViewModels
@@ -36,12 +37,18 @@ namespace TDMController.ViewModels.TDMViewModels
                 new TDMActionButton("Photo", MaterialIconKind.Camera,  new RelayCommand(PhotoBranchAction)),
                 new TDMActionButton("Reset", MaterialIconKind.Restart,  new RelayCommand(ResetBranchesAction)),
             };
+
+            _powerMeter = new TLPowerMeter("USB0::0x1313::0x8078::P0028387::INSTR");
+
+            Task.Run(() =>  MeasurePower());
         }
 
         public ObservableCollection<BranchItem> Branches { get; private set; }
         public Branch PhotoBranch { get; private set; }
 
         public Branch MeasureBranch { get; private set; }
+
+        private TLPowerMeter _powerMeter;
 
         [ObservableProperty]
         private String? _measuredPower = "ND";
@@ -64,6 +71,30 @@ namespace TDMController.ViewModels.TDMViewModels
             {
                 Task.Run(() => branch.HomeDevices());
             }
+
+            Task.Run(() => MeasurePower());
+        }
+
+        private void MeasurePower()
+        {
+            int ndCounter = 0;
+            while (ndCounter < 10)
+            {
+                if (_powerMeter is not null)
+                {
+                    MeasuredPower = _powerMeter.MeasurePowerWithUnit();
+                    if (MeasuredPower == "ND")
+                    {
+                        ndCounter++;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return;
         }
 
     }
