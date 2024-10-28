@@ -29,7 +29,6 @@ namespace TDMController.ViewModels
             _projectCollectionService = projectService;
             _serviceProvider = serviceProvider;
             _series = series;
-            _countOperationsInSeries();
             _seriesCancellationToken = _seriesCancellationTokenSource.Token;
 
             Branches = projectService.BranchList;
@@ -50,12 +49,13 @@ namespace TDMController.ViewModels
                 else if (_series.ProjectKey != projectService.Key)
                 {
                     Logs.Add($"{DateTime.Now} > Incompatible project keys");
-                    _buttonCommand = new RelayCommand(OnButtonClick);
+                    _buttonCommand = null;
                 }
                 else
                 {
                     Logs.Add($"{DateTime.Now} > Series loaded successfully");
                     Logs.Add($"{DateTime.Now} > The project key and series match");
+                    _countOperationsInSeries();
                     _buttonCommand = new RelayCommand(OnButtonClick);
                 }
             }

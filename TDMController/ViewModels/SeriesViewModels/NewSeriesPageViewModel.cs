@@ -24,7 +24,7 @@ namespace TDMController.ViewModels
 
         public ObservableCollection<TDMActionButton>? TDMActionButtons { get; private set; }
 
-        public NewSeriesPageViewModel( IServiceProvider serviceProvider)
+        public NewSeriesPageViewModel(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
 

@@ -36,9 +36,9 @@ namespace TDMController.ViewModels.TDMViewModels
 
             TDMActionButtons =
             [
-                new ("Measure", MaterialIconKind.Finance, new RelayCommand(MeasureBranchAction)),
-                new ("Photo", MaterialIconKind.Camera,  new RelayCommand(PhotoBranchAction)),
-                new ("Reset", MaterialIconKind.Restart,  new RelayCommand(ResetBranchesAction)),
+                new ("Measure", MaterialIconKind.Finance, Branches.Count == 0 ? null: new RelayCommand(MeasureBranchAction)),
+                new ("Photo", MaterialIconKind.Camera, Branches.Count == 0 ?  null : new RelayCommand(PhotoBranchAction)),
+                new ("Reset", MaterialIconKind.Restart, Branches.Count == 0 ?  null : new RelayCommand(ResetBranchesAction)),
             ];
 
             _powerMeter = new TLPowerMeter("USB0::0x1313::0x8078::P0028387::INSTR");
