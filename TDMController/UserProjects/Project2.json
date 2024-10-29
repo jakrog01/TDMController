@@ -16,7 +16,7 @@
       "BranchIndex": 2,
       "MotorList": [
         {
-          "PODLDevice": {}
+          "TLPositionDevice": { "SerialNumber": "225806" }
         }
       ]
     }

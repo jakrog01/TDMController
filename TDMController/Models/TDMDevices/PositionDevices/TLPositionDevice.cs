@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Thorlabs.MotionControl.DeviceManagerCLI;
-using Thorlabs.MotionControl.KCube.BrushlessMotorCLI;
-using Thorlabs.MotionControl.GenericMotorCLI.KCubeMotor;
 using TDMController.Models.TDMDevices.States;
 using System.Threading;
 using System.Text.Json;
+using Thorlabs.MotionControl.GenericMotorCLI;
+using Thorlabs.MotionControl.KCube.BrushlessMotorCLI;
+using Thorlabs.MotionControl.GenericMotorCLI.ControlParameters;
+using Thorlabs.MotionControl.GenericMotorCLI.AdvancedMotor;
+using Thorlabs.MotionControl.GenericMotorCLI.KCubeMotor;
+using Thorlabs.MotionControl.GenericMotorCLI.Settings;
+using Thorlabs.MotionControl.PrivateInternal.Settings;
+using Thorlabs.MotionControl.DeviceManagerCLI;
+
+
 
 namespace TDMController.Models.TDMDevices.PositionDevices
 {
@@ -16,16 +23,16 @@ namespace TDMController.Models.TDMDevices.PositionDevices
         public string SerialNumber { get; set; }
         public int Position { get; set; }
 
-        public KCubeBrushlessMotor KCubeDevice { get; private set; }
+        public KCubeBrushlessMotor? KCubeDevice { get; private set; } = null;
 
         public TLPositionDevice(string serialNumber)
         {
             SerialNumber = serialNumber;
             Position = 0;
-            var initTask = Task.Run(() => InitializeTLPositionMotor());
+            Task.Run(InitializeTLPositionDevice);
         }
 
-        public void InitializeTLPositionMotor()
+        public void InitializeTLPositionDevice()
         {
             DeviceManagerCLI.BuildDeviceList();
             List<string> devices = DeviceManagerCLI.GetDeviceList();

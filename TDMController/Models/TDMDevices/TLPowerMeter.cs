@@ -85,8 +85,24 @@ namespace TDMController.Models.TDMDevices
         {
             double absValue = Math.Abs(value);
 
-            if (absValue >= 1e-3)
+            if (absValue >= 1e9)
+                return $"{value / 1e9:F3} G";
+            else if (absValue >= 1e6)
+                return $"{value / 1e6:F3} M";
+            else if (absValue >= 1e3)
+                return $"{value / 1e3:F3} k";
+            else if (absValue >= 1e2)
+                return $"{value / 1e2:F3} h";
+            else if (absValue >= 1e1)
+                return $"{value / 1e1:F3} da";
+            else if (absValue >= 1)
                 return $"{value:F3} ";
+            else if (absValue >= 1e-1)
+                return $"{value * 1e1:F3} d";
+            else if (absValue >= 1e-2)
+                return $"{value * 1e2:F3} c";
+            else if (absValue >= 1e-3)
+                return $"{value * 1e3:F3} m";
             else if (absValue >= 1e-6)
                 return $"{value * 1e6:F3} µ";
             else if (absValue >= 1e-9)
