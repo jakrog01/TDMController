@@ -60,6 +60,7 @@ namespace TDMController.ViewModels
             if (value is null) return;
             var instance = _serviceProvider.GetRequiredService(value.ModelType);
             if (instance is null) return;
+            (CurrentPage as IDisposable)?.Dispose();
             CurrentPage = (ViewModelBase)instance;
         }
 

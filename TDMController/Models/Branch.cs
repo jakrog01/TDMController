@@ -37,6 +37,10 @@ namespace TDMController.Models
             {
                 Task.Run(() => CheckBranchConnection());
             }
+            else if (RotationDevice is null && PositionDevice is not PODLDevice)
+            {
+                State = BranchStates.Ready;
+            }
         }
 
         private void CheckBranchConnection()

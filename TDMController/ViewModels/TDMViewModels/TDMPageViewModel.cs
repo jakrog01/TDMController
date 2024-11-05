@@ -15,7 +15,7 @@ namespace TDMController.ViewModels.TDMViewModels
     public partial class TDMPageViewModel : ViewModelBase, IDisposable
     {
         private readonly IProjectService _projectService;
-        private Timer _timer;
+        private Timer? _timer;
         private int ndCounter;
 
         public TDMPageViewModel(IProjectService projectService)
@@ -41,7 +41,6 @@ namespace TDMController.ViewModels.TDMViewModels
                 new ("Reset", MaterialIconKind.Restart, Branches.Count == 0 ?  null : new RelayCommand(ResetBranchesAction)),
             ];
 
-            _powerMeter = new TLPowerMeter("USB0::0x1313::0x8078::P0028387::INSTR");
             Task.Run(StartPowerMeasurement);
         }
 
@@ -80,6 +79,7 @@ namespace TDMController.ViewModels.TDMViewModels
 
         public Task StartPowerMeasurement()
         {
+            _powerMeter = new TLPowerMeter("USB0::0x1313::0x8078::P0028387::INSTR");
             _timer = new Timer(MeasurePower, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
             return Task.CompletedTask;
         }

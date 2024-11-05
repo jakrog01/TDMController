@@ -37,7 +37,7 @@
 							Foreground="#627888"
 							FontSize="20"
 							FontFamily="Segoe"/>
-					<Border Height="45" Width="90" CornerRadius="5" BorderThickness="1" BorderBrush="#00B394">
+					<Border Height="45" Width="110" CornerRadius="5" BorderThickness="1" BorderBrush="#00B394">
 						<TextBlock Classes="infoLabel"
 								   VerticalAlignment="Center"
 								   Padding="8"

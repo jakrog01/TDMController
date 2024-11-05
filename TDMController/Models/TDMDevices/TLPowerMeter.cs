@@ -10,14 +10,9 @@ namespace TDMController.Models.TDMDevices
 {
     internal class TLPowerMeter
     {
-        TLPM PowerMeterDevice { get; set; }
+        TLPM? PowerMeterDevice { get; set; }
 
         public TLPowerMeter(string pmID)
-        {
-            Task.Run (() => Initialize(pmID));        
-        }
-
-        public void Initialize(string pmID)
         {
             try
             {
@@ -74,7 +69,10 @@ namespace TDMController.Models.TDMDevices
             if (PowerMeterDevice is not null)
             {
                 double powerValue;
+                double refPower;
                 int err = PowerMeterDevice.measPower(out powerValue);
+                int err2 = PowerMeterDevice.getPowerRef(2, out refPower);
+                powerValue -= refPower;
                 return $"{FormatWithMetricPrefix(powerValue).ToString()}W";
             }
 
@@ -86,29 +84,29 @@ namespace TDMController.Models.TDMDevices
             double absValue = Math.Abs(value);
 
             if (absValue >= 1e9)
-                return $"{value / 1e9:F3} G";
+                return $"{value / 1e9:F2} G";
             else if (absValue >= 1e6)
-                return $"{value / 1e6:F3} M";
+                return $"{value / 1e6:F2} M";
             else if (absValue >= 1e3)
-                return $"{value / 1e3:F3} k";
+                return $"{value / 1e3:F2} k";
             else if (absValue >= 1e2)
-                return $"{value / 1e2:F3} h";
+                return $"{value / 1e2:F2} h";
             else if (absValue >= 1e1)
-                return $"{value / 1e1:F3} da";
+                return $"{value / 1e1:F2} da";
             else if (absValue >= 1)
-                return $"{value:F3} ";
+                return $"{value:F2} ";
             else if (absValue >= 1e-1)
-                return $"{value * 1e1:F3} d";
+                return $"{value * 1e1:F2} d";
             else if (absValue >= 1e-2)
-                return $"{value * 1e2:F3} c";
+                return $"{value * 1e2:F2} c";
             else if (absValue >= 1e-3)
-                return $"{value * 1e3:F3} m";
+                return $"{value * 1e3:F2} m";
             else if (absValue >= 1e-6)
-                return $"{value * 1e6:F3} µ";
+                return $"{value * 1e6:F2} µ";
             else if (absValue >= 1e-9)
-                return $"{value * 1e9:F3} n";
+                return $"{value * 1e9:F2} n";
             else if (absValue >= 1e-12)
-                return $"{value * 1e12:F3} p";
+                return $"{value * 1e12:F2} p";
             else
                 return $"{value}";
         }
