@@ -20,6 +20,8 @@ namespace TDMController.Services
 
         Branch MeasureBranch { get; }
 
+        TLPowerMeter PowerMeter { get; }
+
         void LoadCollectionFromFile(string path);
     }
 
@@ -31,6 +33,8 @@ namespace TDMController.Services
         public Branch PhotoBranch { get; private set; } = null;
 
         public Branch MeasureBranch { get; private set; } = null;
+
+        public TLPowerMeter PowerMeter { get; private set; } = null;
 
         public string Key { get; private set; } = null;
 
@@ -65,6 +69,7 @@ namespace TDMController.Services
                 BranchList = project.Branches;
                 PhotoBranch = project.PhotoBranch;
                 MeasureBranch = project.MeasureBranch;
+                PowerMeter = project.PowerMeter;
                 Key = project.GetKey(project.Branches);
             }
         }

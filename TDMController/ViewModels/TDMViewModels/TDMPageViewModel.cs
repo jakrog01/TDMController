@@ -49,8 +49,6 @@ namespace TDMController.ViewModels.TDMViewModels
 
         public Branch MeasureBranch { get; private set; }
 
-        private TLPowerMeter _powerMeter;
-
         [ObservableProperty]
         private String? _measuredPower = "ND";
 
@@ -75,11 +73,11 @@ namespace TDMController.ViewModels.TDMViewModels
 
             ndCounter = 0;
             Task.Run(StartPowerMeasurement);
+            //TODO add new powermeter implementation
         }
 
         public Task StartPowerMeasurement()
         {
-            _powerMeter = new TLPowerMeter("USB0::0x1313::0x8078::P0028387::INSTR");
             _timer = new Timer(MeasurePower, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
             return Task.CompletedTask;
         }
@@ -92,9 +90,14 @@ namespace TDMController.ViewModels.TDMViewModels
 
         private void MeasurePower(Object? state)
         {
-            if (_powerMeter is not null)
+            if (_projectService.PowerMeter is null)
             {
-                MeasuredPower = _powerMeter.MeasurePowerWithUnit();
+                return;
+            }
+
+            if (_projectService.PowerMeter is not null)
+            {
+                MeasuredPower = _projectService.PowerMeter.MeasurePowerWithUnit();
             }
 
             if (MeasuredPower == "ND")

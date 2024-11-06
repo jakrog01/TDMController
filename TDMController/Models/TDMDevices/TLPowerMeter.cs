@@ -8,9 +8,9 @@ using Thorlabs.TLPM_64.Interop;
 
 namespace TDMController.Models.TDMDevices
 {
-    internal class TLPowerMeter
+    public class TLPowerMeter
     {
-        TLPM? PowerMeterDevice { get; set; }
+        public TLPM? PowerMeterDevice { get; set; }
 
         public TLPowerMeter(string pmID)
         {
@@ -54,11 +54,18 @@ namespace TDMController.Models.TDMDevices
 
         public string MeasurePower()
         {
-            if (PowerMeterDevice is not null)
+            try
             {
-                double powerValue;
-                int err = PowerMeterDevice.measPower(out powerValue);
-                return powerValue.ToString();
+                if (PowerMeterDevice is not null)
+                {
+                    double powerValue;
+                    int err = PowerMeterDevice.measPower(out powerValue);
+                    return powerValue.ToString();
+                }
+            }
+            catch
+            {
+                return "No device detected";
             }
 
             return "No device detected";
@@ -66,17 +73,23 @@ namespace TDMController.Models.TDMDevices
 
         public string MeasurePowerWithUnit()
         {
-            if (PowerMeterDevice is not null)
+            try
             {
-                double powerValue;
-                double refPower;
-                int err = PowerMeterDevice.measPower(out powerValue);
-                int err2 = PowerMeterDevice.getPowerRef(2, out refPower);
-                powerValue -= refPower;
-                return $"{FormatWithMetricPrefix(powerValue).ToString()}W";
+                if (PowerMeterDevice is not null)
+                {
+                    double powerValue;
+                    double refPower;
+                    int err = PowerMeterDevice.measPower(out powerValue);
+                    int err2 = PowerMeterDevice.getPowerRef(0, out refPower);
+                    powerValue -= refPower;
+                    return $"{FormatWithMetricPrefix(powerValue).ToString()}W";
+                }
+                return "ND";
             }
-
-            return "ND";
+            catch
+            {
+                return "ND";
+            }
         }
 
         public static string FormatWithMetricPrefix(double value)

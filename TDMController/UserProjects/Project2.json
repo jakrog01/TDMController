@@ -1,6 +1,7 @@
 {
   "PhotoBranch": 1,
   "MeasureBranch": 2,
+  "PowerMeterID": "USB0::0x1313::0x8078::P0028387::INSTR",
   "Branches": [
     {
       "Com": "COM6",

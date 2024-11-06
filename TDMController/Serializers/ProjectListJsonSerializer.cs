@@ -25,6 +25,8 @@ namespace TDMController.Serializers
             Branch? measureBranch = null;
             Branch? photoBranch = null;
 
+            string? powerMeterID = null;
+
             if (jsonObject.TryGetProperty("MeasureBranch", out var measureIndex))
             {
                 measureBranchIndex = measureIndex.GetInt32();
@@ -33,6 +35,11 @@ namespace TDMController.Serializers
             if (jsonObject.TryGetProperty("PhotoBranch", out var photoIndex))
             {
                 photoBranchIndex = photoIndex.GetInt32();
+            }
+
+            if (jsonObject.TryGetProperty("PowerMeterID", out var powerMeter))
+            {
+                powerMeterID = powerMeter.GetString();
             }
 
             if (jsonObject.TryGetProperty("Branches", out var branchesProperty))
@@ -93,7 +100,7 @@ namespace TDMController.Serializers
                     }
                 }
             }
-            return new Project(listOfBranches, photoBranch, measureBranch);
+            return new Project(listOfBranches, photoBranch, measureBranch, new TLPowerMeter(powerMeterID));
         }
 
         public override void Write(Utf8JsonWriter writer, Project value, JsonSerializerOptions options)
