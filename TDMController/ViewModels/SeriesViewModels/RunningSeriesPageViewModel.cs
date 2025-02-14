@@ -5,10 +5,12 @@ using Material.Icons;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TDMController.Models;
+using TDMController.Models.TDMDevices;
 using TDMController.Models.TDMDevices.States;
 using TDMController.Services;
 
@@ -115,99 +117,123 @@ namespace TDMController.ViewModels
                 Logs.Add($"{DateTime.Now} > Started new series");
             });
 
-            int sequenceIndex = 0;
-            foreach (Sequence sequence in _series.Sequences)
-            {
-                sequenceIndex += 1;
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    Logs.Add($"{DateTime.Now} > Started {sequenceIndex}. sequence. {_series.Sequences.Count - sequenceIndex} left");
-                });
 
-                for (int sequenceRepetition = 0; sequenceRepetition < sequence.Repeat; sequenceRepetition++)
+            int sequenceIndex = 0;
+            string now = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+            string filename = $"{now}.txt";
+            string directoryPath = System.IO.Path.GetFullPath(Environment.CurrentDirectory + @"\PowerMeasurements");
+            try
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+            catch (IOException ex) when (ex.Message.Contains("already exists"))
+            {
+
+            }
+
+            string fullFilePath = Path.Combine(directoryPath, filename);
+
+            using (StreamWriter writer = File.AppendText(fullFilePath))
+            {
+
+                foreach (Sequence sequence in _series!.Sequences)
                 {
+                    sequenceIndex += 1;
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        ValueProgressBar += 1;
-                        Logs.Add($"{DateTime.Now} > Started {sequenceRepetition + 1}. repetition of {sequenceIndex}. sequence. {sequence.Repeat - (1 + sequenceRepetition)} left");
+                        Logs.Add($"{DateTime.Now} > Started {sequenceIndex}. sequence. {_series.Sequences.Count - sequenceIndex} left");
+                    });
+
+                    for (int sequenceRepetition = 0; sequenceRepetition < sequence.Repeat; sequenceRepetition++)
+                    {
+                        await Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            ValueProgressBar += 1;
+                            Logs.Add($"{DateTime.Now} > Started {sequenceRepetition + 1}. repetition of {sequenceIndex}. sequence. {sequence.Repeat - (1 + sequenceRepetition)} left");
+
+                            foreach (Branch branch in Branches)
+                            {
+                                if (branch.State == BranchStates.Error)
+                                {
+                                    Logs.Add($"{DateTime.Now} > Problem with Branch {branch.BranchIndex}");
+                                }
+
+                                if (branch.PositionDevice?.State.HasFlag(PositionDeviceStates.Error) == true)
+                                {
+                                    Logs.Add($"{DateTime.Now} > Problem with position device in Branch {branch.BranchIndex}");
+                                }
+
+                                if (branch.RotationDevice?.State.HasFlag(RotationDeviceStates.Error) == true)
+                                {
+                                    Logs.Add($"{DateTime.Now} > Problem with rotation device in Branch {branch.BranchIndex}");
+                                }
+                            }
+                        });
+
+                        int taskCounter = 0;
+                        var Tasks = new List<Task>();
 
                         foreach (Branch branch in Branches)
                         {
-                            if (branch.State == BranchStates.Error)
+                            var Commands = new List<int>();
+                            if (branch.RotationDevice is not null)
                             {
-                                Logs.Add($"{DateTime.Now} > Problem with Branch {branch.BranchIndex}");
+                                Commands.Add(sequence.Commands[taskCounter]);
+                                taskCounter++;
                             }
 
-                            if (branch.PositionDevice?.State.HasFlag(PositionDeviceStates.Error) == true)
+                            if (branch.PositionDevice is not null)
                             {
-                                Logs.Add($"{DateTime.Now} > Problem with position device in Branch {branch.BranchIndex}");
+                                Commands.Add(sequence.Commands[taskCounter]);
+                                taskCounter++;
                             }
 
-                            if (branch.RotationDevice?.State.HasFlag(RotationDeviceStates.Error) == true)
-                            {
-                                Logs.Add($"{DateTime.Now} > Problem with rotation device in Branch {branch.BranchIndex}");
-                            }
-                        }
-                    });
-
-                    int taskCounter = 0;
-                    var Tasks = new List<Task>();
-
-                    foreach (Branch branch in Branches)
-                    {
-                        var Commands = new List<int>();
-                        if (branch.RotationDevice is not null)
-                        {
-                            Commands.Add(sequence.Commands[taskCounter]);
-                            taskCounter++;
+                            var sequenceTask = Task.Run(() => branch.MoveMotorsInSequence(Commands));
+                            Tasks.Add(sequenceTask);
                         }
 
-                        if (branch.PositionDevice is not null)
-                        {
-                            Commands.Add(sequence.Commands[taskCounter]);
-                            taskCounter++;
-                        }
-
-                        var sequenceTask = Task.Run(() => branch.MoveMotorsInSequence(Commands));
-                        Tasks.Add(sequenceTask);
-                    }
-
-                    await Task.WhenAll(Tasks);
-
-                    for (int actionNumber =0; actionNumber < sequence.ActionPerStep; actionNumber++)
-                    {
-                        if (_projectCollectionService.MeasureBranch is not null && _series.Measure)
-                        {
-                            var measureTask = Task.Run(() => _projectCollectionService.MeasureBranch.SendExternalDeviceTrigger());
-                            Tasks.Add(measureTask);
-                            await Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                Logs.Add($"{DateTime.Now} > Making {actionNumber + 1}. maesurement");
-                            });
-                        }
-
-                        if (_projectCollectionService.PhotoBranch is not null && _series.TakePhoto)
-                        {
-                            var photoTask = Task.Run(() => _projectCollectionService.PhotoBranch.SendExternalDeviceTrigger());
-                            Tasks.Add(photoTask);
-                            await Dispatcher.UIThread.InvokeAsync(() =>
-                            {
-                                Logs.Add($"{DateTime.Now} > Taking {actionNumber + 1}. photo");
-                            });
-                        }
                         await Task.WhenAll(Tasks);
-                        Tasks.Clear();
-                        _seriesCancellationToken.ThrowIfCancellationRequested();
+
+                        for (int actionNumber = 0; actionNumber < sequence.ActionPerStep; actionNumber++)
+                        {
+                            if (_projectCollectionService.MeasureBranch is not null && _series.Measure)
+                            {
+                                var measureTask = Task.Run(() => _projectCollectionService.MeasureBranch.SendExternalDeviceTrigger());
+                                Tasks.Add(measureTask);
+                                await Dispatcher.UIThread.InvokeAsync(() =>
+                                {
+                                    Logs.Add($"{DateTime.Now} > Making {actionNumber + 1}. maesurement");
+                                });
+                            }
+
+                            if (_projectCollectionService.PhotoBranch is not null && _series.TakePhoto)
+                            {
+                                var photoTask = Task.Run(() => _projectCollectionService.PhotoBranch.SendExternalDeviceTrigger());
+                                Tasks.Add(photoTask);
+                                await Dispatcher.UIThread.InvokeAsync(() =>
+                                {
+                                    Logs.Add($"{DateTime.Now} > Taking {actionNumber + 1}. photo");
+                                });
+                            }
+                            await Task.WhenAll(Tasks);
+                            Tasks.Clear();
+                            _seriesCancellationToken.ThrowIfCancellationRequested();
+
+                            if (_projectCollectionService.PowerMeter.PowerMeterDevice is not null)
+                            {
+                                var power = _projectCollectionService.PowerMeter.MeasurePower();
+                                writer.WriteLine(power);
+                            }
+                        }
                     }
                 }
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    Logs.Add($"{DateTime.Now} > Series completed");
+                });
+
             }
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                Logs.Add($"{DateTime.Now} > Series completed");
-            });
-
         }
-
         public void StopMeasurement()
         {
             _isRunning = false;
